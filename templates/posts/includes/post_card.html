@@ -1,0 +1,91 @@
+{% load static %}
+
+<div class="d-flex">
+    <div class="flex-shrink-0">
+        {% if post.author.avatar %}
+        <img src="{{ post.author.avatar.url }}" class="rounded-circle" width="48" height="48" style="object-fit: cover;">
+        {% else %}
+        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" 
+             style="width: 48px; height: 48px;">
+            <span class="text-white">{{ post.author.username|first|upper }}</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="flex-grow-1 ms-3">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <a href="{% url 'accounts:profile' post.author.pk %}" class="fw-bold text-decoration-none">
+                    {{ post.author.username }}
+                </a>
+                <span class="text-muted small ms-2">{{ post.created_at|date:"d.m.Y H:i" }}</span>
+                {% if post.is_pinned %}
+                <span class="badge bg-warning ms-2">📌 Закріплено</span>
+                {% endif %}
+            </div>
+            {% if user == post.author or user.is_moderator %}
+            <div class="dropdown">
+                <button class="btn btn-sm btn-link" type="button" data-bs-toggle="dropdown">
+                    ⋮
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'posts:post_update' post.pk %}">Редагувати</a></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'posts:post_delete' post.pk %}">Видалити</a></li>
+                    {% if user.is_moderator %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="post" action="{% url 'posts:pin_post' post.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">
+                                {% if post.is_pinned %}Відкріпити{% else %}Закріпити{% endif %}
+                            </button>
+                        </form>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        
+        <p class="mb-2">{{ post.content|linebreaks }}</p>
+        
+        {% if post.media_file %}
+        <div class="mb-2">
+            {% if post.media_type == 'image' %}
+            <img src="{{ post.media_file.url }}" class="img-fluid rounded" alt="Post image" style="max-height: 300px;">
+            {% elif post.media_type == 'video' %}
+            <video controls class="w-100 rounded">
+                <source src="{{ post.media_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            {% elif post.media_type == 'demo' %}
+            <div class="alert alert-secondary">
+                <i class="bi bi-file-earmark-binary"></i> Демо-файл: 
+                <a href="{{ post.media_file.url }}" download>{{ post.media_file.name|slice:"12:" }}</a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="mb-2">
+            {% for hashtag in post.hashtags.all %}
+            <a href="{% url 'posts:hashtag_posts' hashtag.name %}" class="text-decoration-none">
+                <span class="badge bg-light text-dark">#{{ hashtag.name }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        
+        <div class="d-flex align-items-center">
+            <form method="post" action="{% url 'posts:like_post' post.pk %}" class="me-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm {% if user in post.likes.all %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    <i class="bi bi-heart{% if user in post.likes.all %}-fill{% endif %}"></i> 
+                    {{ post.likes.count }}
+                </button>
+            </form>
+            
+            <a href="{% url 'posts:post_detail' post.pk %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chat"></i> Коментарі ({{ post.comments.count }})
+            </a>
+        </div>
+    </div>
+</div>

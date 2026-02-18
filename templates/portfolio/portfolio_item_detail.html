@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ portfolio_item.title }} | Портфоліо | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ portfolio_item.title }}</h1>
+        <div>
+            {% if can_edit %}
+            <a href="{% url 'portfolio:portfolio_item_update' portfolio_item.pk %}" 
+               class="btn btn-outline-primary">Редагувати</a>
+            <a href="{% url 'portfolio:portfolio_item_delete' portfolio_item.pk %}" 
+               class="btn btn-outline-danger">Видалити</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-info">{{ portfolio_item.get_item_type_display }}</span>
+                            {% if portfolio_item.role %}
+                            <span class="badge bg-warning ms-1">{{ portfolio_item.get_role_display }}</span>
+                            {% endif %}
+                            {% if portfolio_item.game_map %}
+                            <span class="badge bg-success ms-1">{{ portfolio_item.game_map }}</span>
+                            {% endif %}
+                            {% if portfolio_item.weapon %}
+                            <span class="badge bg-secondary ms-1">{{ portfolio_item.weapon }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">
+                                {{ portfolio_item.created_at|date:"d.m.Y H:i" }}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p>{{ portfolio_item.description|linebreaks }}</p>
+                    </div>
+                    
+                    {% if portfolio_item.file %}
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-file-earmark"></i> Файл
+                            </h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-0">{{ portfolio_item.file.name|slice:"10:" }}</p>
+                                    <small class="text-muted">
+                                        Розмір: {{ portfolio_item.file.size|filesizeformat }}
+                                    </small>
+                                </div>
+                                <a href="{{ portfolio_item.file.url }}" class="btn btn-primary" download>
+                                    <i class="bi bi-download"></i> Завантажити
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="border-top pt-3">
+                        <small class="text-muted">
+                            Автор: 
+                            <a href="{% url 'accounts:profile' portfolio_item.user.pk %}">
+                                {{ portfolio_item.user.username }}
+                            </a>
+                            {% if not portfolio_item.is_approved %}
+                            | <span class="badge bg-warning">На перевірці</span>
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація про хайлайт</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Тип:</span>
+                            <span>{{ portfolio_item.get_item_type_display }}</span>
+                        </li>
+                        {% if portfolio_item.role %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Роль:</span>
+                            <span>{{ portfolio_item.get_role_display }}</span>
+                        </li>
+                        {% endif %}
+                        {% if portfolio_item.game_map %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Карта:</span>
+                            <span>{{ portfolio_item.game_map }}</span>
+                        </li>
+                        {% endif %}
+                        {% if portfolio_item.weapon %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Зброя:</span>
+                            <span>{{ portfolio_item.weapon }}</span>
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Статус:</span>
+                            <span>
+                                {% if portfolio_item.is_approved %}
+                                <span class="badge bg-success">Схвалено</span>
+                                {% else %}
+                                <span class="badge bg-warning">На перевірці</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Додано:</span>
+                            <span>{{ portfolio_item.created_at|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Автор:</span>
+                            <span>
+                                <a href="{% url 'accounts:profile' portfolio_item.user.pk %}">
+                                    {{ portfolio_item.user.username }}
+                                </a>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            {% if similar_items %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Інші хайлайти автора</h5>
+                    <div class="list-group list-group-flush">
+                        {% for item in similar_items %}
+                        <a href="{% url 'portfolio:portfolio_item_detail' item.pk %}" 
+                           class="list-group-item list-group-item-action">
+                            <h6 class="mb-1">{{ item.title }}</h6>
+                            <small class="text-muted">{{ item.created_at|date:"d.m.Y" }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Навігація</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'portfolio:portfolio_list' %}" class="list-group-item list-group-item-action">
+                            ← Всі портфоліо
+                        </a>
+                        <a href="{% url 'portfolio:user_portfolio' portfolio_item.user.pk %}" 
+                           class="list-group-item list-group-item-action">
+                            Портфоліо {{ portfolio_item.user.username }}
+                        </a>
+                        {% if portfolio_item.item_type %}
+                        <a href="{% url 'portfolio:portfolio_by_type' portfolio_item.item_type %}" 
+                           class="list-group-item list-group-item-action">
+                            Хайлайти типу "{{ portfolio_item.get_item_type_display }}"
+                        </a>
+                        {% endif %}
+                        {% if portfolio_item.role %}
+                        <a href="{% url 'portfolio:portfolio_by_role' portfolio_item.role %}" 
+                           class="list-group-item list-group-item-action">
+                            Хайлайти ролі "{{ portfolio_item.get_role_display }}"
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

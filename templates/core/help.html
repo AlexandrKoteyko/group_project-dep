@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Допомога | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Допомога та підтримка</h1>
+    
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="list-group">
+                <a href="#getting-started" class="list-group-item list-group-item-action">Початок роботи</a>
+                <a href="#posts" class="list-group-item list-group-item-action">Пости та коментарі</a>
+                <a href="#forum" class="list-group-item list-group-item-action">Форум</a>
+                <a href="#gallery" class="list-group-item list-group-item-action">Галерея</a>
+                <a href="#portfolio" class="list-group-item list-group-item-action">Портфоліо</a>
+                <a href="#profile" class="list-group-item list-group-item-action">Профіль</a>
+                <a href="#moderation" class="list-group-item list-group-item-action">Модерація</a>
+                <a href="#faq" class="list-group-item list-group-item-action">Часті питання</a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card mb-4" id="getting-started">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🚀 Початок роботи</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Реєстрація</h6>
+                    <ol>
+                        <li>Натисніть "Реєстрація" у верхньому меню</li>
+                        <li>Заповніть форму з ім'ям користувача, email та паролем</li>
+                        <li>Підтвердіть email (якщо потрібно)</li>
+                        <li>Увійдіть в акаунт</li>
+                    </ol>
+                    
+                    <h6>Налаштування профілю</h6>
+                    <ol>
+                        <li>Перейдіть в "Профіль"</li>
+                        <li>Натисніть "Редагувати профіль"</li>
+                        <li>Додайте аватар, біографію, Steam профіль</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="posts">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📝 Пости та коментарі</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Як створити пост?</h6>
+                    <ol>
+                        <li>На головній сторінці натисніть поле "Що нового?"</li>
+                        <li>Напишіть текст (до 280 символів)</li>
+                        <li>Додайте хештеги через кому (наприклад: #mirage, #awp)</li>
+                        <li>Виберіть тип медіа та завантажте файл (опціонально)</li>
+                        <li>Натисніть "Опублікувати"</li>
+                    </ol>
+                    
+                    <h6>Як додати коментар?</h6>
+                    <ol>
+                        <li>Відкрийте пост</li>
+                        <li>Введіть текст коментаря</li>
+                        <li>Натисніть "Додати коментар"</li>
+                    </ol>
+                    
+                    <h6>Як поставити лайк?</h6>
+                    <p>Натисніть ❤️ під постом або коментарем</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="forum">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">💬 Форум</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Як створити тему?</h6>
+                    <ol>
+                        <li>Перейдіть в категорію форуму</li>
+                        <li>Натисніть "Створити тему"</li>
+                        <li>Виберіть категорію, напишіть заголовок та текст</li>
+                        <li>Натисніть "Створити"</li>
+                    </ol>
+                    
+                    <h6>Як відповісти в темі?</h6>
+                    <ol>
+                        <li>Відкрийте тему</li>
+                        <li>Прокрутіть до форми відповіді</li>
+                        <li>Напишіть повідомлення</li>
+                        <li>Натисніть "Відправити"</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="gallery">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🖼️ Галерея</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Як завантажити медіа?</h6>
+                    <ol>
+                        <li>Перейдіть в галерею</li>
+                        <li>Натисніть "Завантажити"</li>
+                        <li>Виберіть тип медіа (скріншот, мем, кліп)</li>
+                        <li>Виберіть файл</li>
+                        <li>Додайте назву та опис</li>
+                        <li>Натисніть "Завантажити"</li>
+                    </ol>
+                    <p class="text-muted">Медіа з'явиться після перевірки модератором</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="portfolio">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🏆 Портфоліо</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Як додати хайлайт?</h6>
+                    <ol>
+                        <li>Перейдіть в портфоліо</li>
+                        <li>Натисніть "Додати хайлайт"</li>
+                        <li>Виберіть тип (скріншот, демо, відео)</li>
+                        <li>Заповніть інформацію (карта, зброя, роль)</li>
+                        <li>Натисніть "Додати"</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="profile">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">👤 Профіль</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Як редагувати профіль?</h6>
+                    <ol>
+                        <li>Перейдіть в свій профіль</li>
+                        <li>Натисніть "Редагувати профіль"</li>
+                        <li>Змініть аватар, біографію, Steam профіль</li>
+                        <li>Натисніть "Зберегти"</li>
+                    </ol>
+                    
+                    <h6>Як змінити пароль?</h6>
+                    <ol>
+                        <li>В профілі натисніть "Змінити пароль"</li>
+                        <li>Введіть старий пароль</li>
+                        <li>Введіть новий пароль двічі</li>
+                        <li>Натисніть "Змінити"</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="moderation">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">🔨 Модерація</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Як стати модератором?</h6>
+                    <p>Модератори призначаються адміністрацією сайту. Щоб звернути увагу, будьте активними, створюйте якісний контент та дотримуйтесь правил.</p>
+                    
+                    <h6>Як повідомити про порушення?</h6>
+                    <p>Ви можете звернутися до модераторів через форму контактів або Telegram.</p>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="faq">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">❓ Часті питання</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="helpFAQ">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#helpFAQ1">
+                                    Чи можна завантажувати демо-файли?
+                                </button>
+                            </h2>
+                            <div id="helpFAQ1" class="accordion-collapse collapse show" data-bs-parent="#helpFAQ">
+                                <div class="accordion-body">
+                                    Так, демо-файли можна завантажувати в розділі "Портфоліо".
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#helpFAQ2">
+                                    Чи безкоштовний сайт?
+                                </button>
+                            </h2>
+                            <div id="helpFAQ2" class="accordion-collapse collapse" data-bs-parent="#helpFAQ">
+                                <div class="accordion-body">
+                                    Так, сайт повністю безкоштовний. Ви можете підтримати проект в розділі "Підтримка".
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#helpFAQ3">
+                                    Як видалити акаунт?
+                                </button>
+                            </h2>
+                            <div id="helpFAQ3" class="accordion-collapse collapse" data-bs-parent="#helpFAQ">
+                                <div class="accordion-body">
+                                    Напишіть в службу підтримки, і ми допоможемо видалити акаунт.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

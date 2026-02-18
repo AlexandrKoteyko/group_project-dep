@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load material_tags %}
+{% block title %}{{ category_name }} | Матеріали | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Матеріали: {{ category_name }}</h1>
+        {% if user.is_moderator %}
+        <a href="{% url 'materials:material_create' %}" class="btn btn-success">Додати матеріал</a>
+        {% endif %}
+    </div>
+    
+    <div class="row">
+        {% for material in materials %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-info">{{ material.get_category_display }}</span>
+                        {% if material.downloads > 0 %}
+                        <small class="text-muted">{{ material.downloads }} завантажень</small>
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="card-title">
+                        <a href="{% url 'materials:material_detail' material.pk %}" class="text-decoration-none">
+                            {{ material.title }}
+                        </a>
+                    </h5>
+                    
+                    <p class="card-text small">{{ material.description|truncatewords:20 }}</p>
+                    
+                    <div class="mt-auto">
+                        {% if material.file %}
+                        <a href="{% url 'materials:material_download' material.pk %}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-download"></i> Завантажити
+                        </a>
+                        {% elif material.link %}
+                        <a href="{{ material.link }}" target="_blank" class="btn btn-sm btn-secondary">
+                            <i class="bi bi-link"></i> Посилання
+                        </a>
+                        {% elif material.youtube_embed %}
+                        <span class="badge bg-danger">YouTube</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        {{ material.created_at|date:"d.m.Y" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Поки що немає матеріалів у цій категорії.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="Навігація по сторінках" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Всі категорії</h5>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'materials:material_list' %}" class="btn btn-outline-secondary">
+                    Всі матеріали
+                </a>
+                {% for category_value, category_name in view.categories %}
+                <a href="{% url 'materials:material_by_category' category_value %}" 
+                   class="btn btn-outline-primary {% if current_category == category_value %}active{% endif %}">
+                    {{ category_name }}
+                </a>
+                {% endfor %}
+                <a href="{% url 'materials:popular_materials' %}" class="btn btn-outline-info">
+                    Популярні
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

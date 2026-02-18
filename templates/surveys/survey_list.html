@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Опитування | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Опитування CS2</h1>
+        {% if user.is_moderator %}
+        <a href="{% url 'surveys:survey_create' %}" class="btn btn-success">Створити опитування</a>
+        {% endif %}
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <ul class="nav nav-tabs mb-4" id="surveyTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="all-tab" data-bs-toggle="tab" 
+                            data-bs-target="#all" type="button" role="tab">
+                        Всі опитування
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="active-tab" data-bs-toggle="tab" 
+                            data-bs-target="#active" type="button" role="tab">
+                        Активні ({{ active_surveys_count }})
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="surveyTabContent">
+                <div class="tab-pane fade show active" id="all" role="tabpanel">
+                    {% for survey in surveys %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title">
+                                        <a href="{% url 'surveys:survey_detail' survey.pk %}" class="text-decoration-none">
+                                            {{ survey.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text">{{ survey.description|truncatewords:30 }}</p>
+                                    <div class="mb-2">
+                                        {% if survey.is_active %}
+                                        <span class="badge bg-success">Активне</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Неактивне</span>
+                                        {% endif %}
+                                        <span class="badge bg-info">Питань: {{ survey.questions.count }}</span>
+                                        {% if survey.is_multi_page %}
+                                        <span class="badge bg-warning">Багатосторінкове</span>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted">
+                                        Створено: {{ survey.created_at|date:"d.m.Y H:i" }}
+                                    </small>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="{% url 'surveys:survey_detail' survey.pk %}" 
+                                       class="btn btn-sm btn-outline-primary">Деталі</a>
+                                    {% if survey.is_active %}
+                                    <a href="{% url 'surveys:survey_take' survey.pk %}" 
+                                       class="btn btn-sm btn-success">Пройти</a>
+                                    {% endif %}
+                                    <a href="{% url 'surveys:survey_results' survey.pk %}" 
+                                       class="btn btn-sm btn-outline-info">Результати</a>
+                                    {% if user.is_moderator %}
+                                    <a href="{% url 'surveys:survey_update' survey.pk %}" 
+                                       class="btn btn-sm btn-outline-warning">Редагувати</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-info">
+                        Поки що немає опитувань.
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="tab-pane fade" id="active" role="tabpanel">
+                    {% for survey in surveys %}
+                        {% if survey.is_active %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <!-- Такий самий вміст як вище -->
+                                <h5 class="card-title">
+                                    <a href="{% url 'surveys:survey_detail' survey.pk %}" class="text-decoration-none">
+                                        {{ survey.title }}
+                                    </a>
+                                </h5>
+                                <p class="card-text">{{ survey.description|truncatewords:30 }}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge bg-info">Питань: {{ survey.questions.count }}</span>
+                                    </div>
+                                    <a href="{% url 'surveys:survey_take' survey.pk %}" class="btn btn-sm btn-success">
+                                        Пройти опитування
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% empty %}
+                    <div class="alert alert-info">
+                        Немає активних опитувань.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            {% if is_paginated %}
+            <nav aria-label="Навігація по сторінках" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Приклади опитувань</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">✓ "Ліпша мапа патчу?"</li>
+                        <li class="list-group-item">✓ "Хто MVP BLAST цього тижня?"</li>
+                        <li class="list-group-item">✓ "Яка роль найважча?"</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Фільтр</h5>
+                    <div class="list-group">
+                        <a href="{% url 'surveys:survey_list' %}" class="list-group-item list-group-item-action">
+                            Всі опитування
+                        </a>
+                        <a href="{% url 'surveys:active_surveys' %}" class="list-group-item list-group-item-action">
+                            Активні опитування
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

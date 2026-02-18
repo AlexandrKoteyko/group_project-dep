@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}API інформація | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">API інформація</h1>
+    
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        Наш API знаходиться в розробці. Деякі ендпоінти вже доступні для тестування.
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Доступні ендпоінти</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ендпоінт</th>
+                            <th>Методи</th>
+                            <th>Опис</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/api/posts/</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>Отримання списку постів</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/posts/&lt;id&gt;/</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>Отримання детальної інформації про пост</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/users/</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>Отримання списку користувачів</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/users/&lt;id&gt;/</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>Отримання інформації про користувача</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/forum/topics/</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>Отримання списку тем форуму</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/gallery/</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>Отримання списку медіа з галереї</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/portfolio/</code></td>
+                            <td><span class="badge bg-success">GET</span></td>
+                            <td>Отримання списку елементів портфоліо</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Приклад використання</h5>
+        </div>
+        <div class="card-body">
+            <h6>Отримання списку постів:</li>
+            <pre class="bg-light p-3 rounded"><code>fetch('/api/posts/')
+    .then(response => response.json())
+    .then(data => console.log(data));</code></pre>
+            
+            <h6>Отримання конкретного поста:</h6>
+            <pre class="bg-light p-3 rounded"><code>fetch('/api/posts/1/')
+    .then(response => response.json())
+    .then(data => console.log(data));</code></pre>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Авторизація</h5>
+        </div>
+        <div class="card-body">
+            <p>Для доступу до захищених ендпоінтів потрібна авторизація через токен:</p>
+            <pre class="bg-light p-3 rounded"><code>fetch('/api/protected-endpoint/', {
+    headers: {
+        'Authorization': 'Token ваш_токен'
+    }
+})</code></pre>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Обмеження</h5>
+        </div>
+        <div class="card-body">
+            <ul>
+                <li>Ліміт запитів: 100 запитів на годину з однієї IP-адреси</li>
+                <li>Максимальний розмір відповіді: 1MB</li>
+                <li>Підтримуються формати: JSON</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

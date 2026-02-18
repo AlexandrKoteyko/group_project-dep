@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Контакти | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mb-4">Зв'яжіться з нами</h1>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.name.label_tag }}
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.email.label_tag }}
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.subject.label_tag }}
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                            <div class="text-danger">{{ form.subject.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.message.label_tag }}
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                            <div class="text-danger">{{ form.message.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Надіслати</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-4 text-center">
+                    <h5><i class="bi bi-envelope"></i> Email</h5>
+                    <p>info@cs2microtwitter.com</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5><i class="bi bi-telegram"></i> Telegram</h5>
+                    <p>@cs2microtwitter</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h5><i class="bi bi-discord"></i> Discord</h5>
+                    <p>cs2-microtwitter</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

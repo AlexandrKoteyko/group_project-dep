@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ announcement.title }} | Оголошення | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ announcement.title }}</h1>
+        <div>
+            {% if user.is_moderator %}
+            <a href="{% url 'announcements:announcement_update' announcement.pk %}" 
+               class="btn btn-outline-primary">Редагувати</a>
+            <a href="{% url 'announcements:announcement_delete' announcement.pk %}" 
+               class="btn btn-outline-danger">Видалити</a>
+            <form method="post" action="{% url 'announcements:announcement_pin' announcement.pk %}" 
+                  class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-warning">
+                    {% if announcement.is_pinned %}Відкріпити{% else %}Закріпити{% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-info">{{ announcement.get_announcement_type_display }}</span>
+                            {% if announcement.is_pinned %}
+                            <span class="badge bg-warning">Закріплено</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">
+                                {{ announcement.created_at|date:"d.m.Y H:i" }}
+                                {% if announcement.updated_at != announcement.created_at %}
+                                <br><small>(оновлено: {{ announcement.updated_at|date:"d.m.Y H:i" }})</small>
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p>{{ announcement.content|linebreaks }}</p>
+                    </div>
+                    
+                    <div class="border-top pt-3">
+                        <small class="text-muted">
+                            Автор: 
+                            <a href="{% url 'accounts:profile' announcement.author.pk %}">
+                                {{ announcement.author.username }}
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Тип:</span>
+                            <span>{{ announcement.get_announcement_type_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Статус:</span>
+                            <span>
+                                {% if announcement.is_pinned %}
+                                <span class="badge bg-warning">Закріплено</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Звичайне</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Створено:</span>
+                            <span>{{ announcement.created_at|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% if announcement.updated_at != announcement.created_at %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Оновлено:</span>
+                            <span>{{ announcement.updated_at|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Автор:</span>
+                            <span>
+                                <a href="{% url 'accounts:profile' announcement.author.pk %}">
+                                    {{ announcement.author.username }}
+                                </a>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Навігація</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'announcements:announcement_list' %}" 
+                           class="list-group-item list-group-item-action">
+                            ← Всі оголошення
+                        </a>
+                        <a href="{% url 'announcements:announcement_by_type' announcement.announcement_type %}" 
+                           class="list-group-item list-group-item-action">
+                            Оголошення типу "{{ announcement.get_announcement_type_display }}"
+                        </a>
+                        <a href="{% url 'announcements:latest_announcements' %}" 
+                           class="list-group-item list-group-item-action">
+                            Останні оголошення
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

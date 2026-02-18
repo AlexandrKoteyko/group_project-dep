@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Головна | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="jumbotron bg-light p-5 rounded mb-4">
+                <h1 class="display-4">Ласкаво просимо до CS2 MicroTwitter! 🎮</h1>
+                <p class="lead">Соціальна мережа для фанатів Counter-Strike 2</p>
+                <hr class="my-4">
+                <p>Діліться хайлайтами, обговорюйте матчі, голосуйте за найкращі моменти</p>
+                {% if not user.is_authenticated %}
+                <a class="btn btn-primary btn-lg" href="{% url 'accounts:signup' %}" role="button">
+                    Приєднатися до спільноти
+                </a>
+                {% endif %}
+            </div>
+            
+            <h3 class="mb-3">Останні пости</h3>
+            {% for post in latest_posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            {% if post.author.avatar %}
+                            <img src="{{ post.author.avatar.url }}" class="rounded-circle" width="48" height="48" style="object-fit: cover;">
+                            {% else %}
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 48px; height: 48px;">
+                                <span class="text-white">{{ post.author.username|first|upper }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title">
+                                <a href="{% url 'accounts:profile' post.author.pk %}" class="text-decoration-none">
+                                    {{ post.author.username }}
+                                </a>
+                            </h5>
+                            <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                            <a href="{% url 'posts:post_detail' post.pk %}" class="btn btn-sm btn-outline-primary">
+                                Читати далі
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Статистика</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>👥 Користувачів:</span>
+                            <span>{{ stats.users_count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>📝 Постів:</span>
+                            <span>{{ stats.posts_count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>💬 Тем на форумі:</span>
+                            <span>{{ stats.topics_count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>🖼️ Медіа в галереї:</span>
+                            <span>{{ stats.gallery_count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>🏆 Хайлайтів:</span>
+                            <span>{{ stats.portfolio_count }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">🔥 Трендові хештеги</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for hashtag in trending_hashtags %}
+                        <a href="{% url 'posts:hashtag_posts' hashtag.name %}" class="text-decoration-none">
+                            <span class="badge bg-secondary">#{{ hashtag.name }}</span>
+                        </a>
+                        {% empty %}
+                        <p class="text-muted">Поки що немає хештегів</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">📅 Майбутні події</h5>
+                    {% for event in upcoming_events %}
+                    <div class="mb-2">
+                        <strong>{{ event.title }}</strong><br>
+                        <small class="text-muted">{{ event.date|date:"d.m.Y H:i" }}</small>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">Немає майбутніх подій</p>
+                    {% endfor %}
+                    <a href="{% url 'events:event_list' %}" class="btn btn-sm btn-outline-primary mt-2">Всі події</a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">📢 Оголошення</h5>
+                    {% for announcement in latest_announcements %}
+                    <div class="mb-2">
+                        <strong>{{ announcement.title }}</strong><br>
+                        <small class="text-muted">{{ announcement.created_at|date:"d.m.Y" }}</small>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">Немає оголошень</p>
+                    {% endfor %}
+                    <a href="{% url 'announcements:announcement_list' %}" class="btn btn-sm btn-outline-primary mt-2">
+                        Всі оголошення
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

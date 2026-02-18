@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ topic.title }} | Форум | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ topic.title }}</h1>
+        <div>
+            {% if user.is_authenticated and user == topic.created_by or user.is_moderator %}
+            <a href="{% url 'forum:topic_update' topic.pk %}" class="btn btn-sm btn-outline-primary">Редагувати</a>
+            <a href="{% url 'forum:topic_delete' topic.pk %}" class="btn btn-sm btn-outline-danger">Видалити</a>
+            {% endif %}
+            {% if user.is_moderator %}
+            <form method="post" action="{% url 'forum:topic_pin' topic.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-warning">
+                    {% if topic.is_pinned %}Відкріпити{% else %}Закріпити{% endif %}
+                </button>
+            </form>
+            <form method="post" action="{% url 'forum:topic_close' topic.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                    {% if topic.is_closed %}Відкрити{% else %}Закрити{% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3">
+                <div>
+                    <strong>{{ topic.created_by.username }}</strong>
+                    <small class="text-muted ms-2">{{ topic.created_at|date:"d.m.Y H:i" }}</small>
+                </div>
+                <span class="badge bg-info">{{ topic.category.get_name_display }}</span>
+            </div>
+            <p class="card-text">{{ topic.content|linebreaks }}</p>
+        </div>
+    </div>
+    
+    <h4 class="mb-3">Повідомлення ({{ messages.count }})</h4>
+    
+    {% for message in messages %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-2">
+                <div>
+                    <strong>{{ message.author.username }}</strong>
+                    <small class="text-muted ms-2">{{ message.created_at|date:"d.m.Y H:i" }}</small>
+                </div>
+                <div>
+                    {% if user.is_authenticated and user == message.author or user.is_moderator %}
+                    <a href="{% url 'forum:message_update' message.pk %}" class="btn btn-sm btn-outline-primary">Редагувати</a>
+                    <a href="{% url 'forum:message_delete' message.pk %}" class="btn btn-sm btn-outline-danger">Видалити</a>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="card-text">{{ message.text|linebreaks }}</p>
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info">
+        Поки що немає повідомлень. Будьте першим!
+    </div>
+    {% endfor %}
+    
+    {% if user.is_authenticated %}
+        {% if not topic.is_closed or user.is_moderator %}
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Додати повідомлення</h5>
+                <form method="post" action="{% url 'forum:add_message' topic.pk %}">
+                    {% csrf_token %}
+                    {{ message_form.as_p }}
+                    <button type="submit" class="btn btn-primary">Відправити</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-warning mt-4">
+            Ця тема закрита для нових повідомлень.
+        </div>
+        {% endif %}
+    {% else %}
+    <div class="alert alert-info mt-4">
+        <a href="{% url 'accounts:login' %}?next={% url 'forum:topic_detail' topic.pk %}">Увійдіть</a>, щоб додати повідомлення.
+    </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{% url 'forum:topic_by_category' topic.category.id %}" class="btn btn-outline-secondary">
+            Назад до категорії
+        </a>
+    </div>
+</div>
+{% endblock %}

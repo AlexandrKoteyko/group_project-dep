@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if object %}Редагувати хайлайт{% else %}Додати хайлайт{% endif %} | CS2 MicroTwitter
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        {% if object %}
+                        Редагувати хайлайт
+                        {% else %}
+                        Додати новий хайлайт до портфоліо
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.title.label_tag }}
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Придумайте назву для вашого хайлайту</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.item_type.label_tag }}
+                            {{ form.item_type }}
+                            {% if form.item_type.errors %}
+                            <div class="text-danger">{{ form.item.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Виберіть тип вашого вмісту</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.description.label_tag }}
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Опишіть свій хайлайт детально</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.file.label_tag }}
+                            {{ form.file }}
+                            {% if form.file.errors %}
+                            <div class="text-danger">{{ form.file.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Завантажте файл (скріншот, відео, демо-файл)</div>
+                            
+                            {% if object and object.file %}
+                            <div class="mt-2">
+                                <p>Поточний файл: {{ object.file.name|slice:"11:" }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.role.label_tag }}
+                                {{ form.role }}
+                                {% if form.role.errors %}
+                                <div class="text-danger">{{ form.role.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">Ваша роль у грі (необов'язково)</div>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.game_map.label_tag }}
+                                {{ form.game_map }}
+                                {% if form.game_map.errors %}
+                                <div class="text-danger">{{ form.game_map.errors }}</div>
+                                {% endif %}
+                                <div class="form-text">Карта (необов'язково)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.weapon.label_tag }}
+                            {{ form.weapon }}
+                            {% if form.weapon.errors %}
+                            <div class="text-danger">{{ form.weapon.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Зброя (необов'язково)</div>
+                        </div>
+                        
+                        {% if not user.is_moderator and object %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Після редагування хайлайт знову потрапить на перевірку модератору.
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-between">
+                            {% if object %}
+                            <a href="{% url 'portfolio:portfolio_item_detail' object.pk %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% else %}
+                            <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-primary">
+                                {% if object %}Зберегти зміни{% else %}Додати хайлайт{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+</style>
+{% endblock %}

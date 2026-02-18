@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} | Події | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ event.title }}</h1>
+        <div>
+            {% if user.is_moderator %}
+            <a href="{% url 'events:event_update' event.pk %}" class="btn btn-outline-primary">Редагувати</a>
+            <a href="{% url 'events:event_delete' event.pk %}" class="btn btn-outline-danger">Видалити</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                {% if event.image %}
+                <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.title }}">
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-info">{{ event.get_event_type_display }}</span>
+                            {% if is_upcoming %}
+                            <span class="badge bg-success">Майбутня</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Минула</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">{{ event.date|date:"d.m.Y H:i" }}</div>
+                            {% if event.end_date %}
+                            <div class="text-muted">до {{ event.end_date|date:"d.m.Y H:i" }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if event.location %}
+                    <div class="mb-3">
+                        <strong>Місце проведення:</strong>
+                        <p class="mb-0">{{ event.location }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <strong>Опис:</strong>
+                        <p>{{ event.description|linebreaks }}</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        {% if is_upcoming %}
+                        <form method="post" action="{% url 'events:event_register' event.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Зареєструватися</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація про подію</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Тип:</span>
+                            <span>{{ event.get_event_type_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Початок:</span>
+                            <span>{{ event.date|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% if event.end_date %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Кінець:</span>
+                            <span>{{ event.end_date|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% endif %}
+                        {% if event.location %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Місце:</span>
+                            <span>{{ event.location }}</span>
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Статус:</span>
+                            <span>
+                                {% if is_upcoming %}
+                                <span class="badge bg-success">Майбутня</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Минула</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Навігація</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'events:event_list' %}" class="list-group-item list-group-item-action">
+                            ← Всі події
+                        </a>
+                        {% if is_upcoming %}
+                        <a href="{% url 'events:upcoming_events' %}" class="list-group-item list-group-item-action">
+                            Майбутні події
+                        </a>
+                        {% else %}
+                        <a href="{% url 'events:past_events' %}" class="list-group-item list-group-item-action">
+                            Минулі події
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'events:event_by_type' event.event_type %}" class="list-group-item list-group-item-action">
+                            Події типу "{{ event.get_event_type_display }}"
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

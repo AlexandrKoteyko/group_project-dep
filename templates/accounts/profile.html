@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }} | Профіль | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if profile_user.avatar %}
+                    <img src="{{ profile_user.avatar.url }}" 
+                         alt="{{ profile_user.username }}" 
+                         class="rounded-circle mb-3"
+                         style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mb-3 mx-auto"
+                         style="width: 150px; height: 150px;">
+                        <span class="text-white display-4">{{ profile_user.username|first|upper }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <h3 class="card-title">{{ profile_user.username }}</h3>
+                    
+                    <p class="text-muted">
+                        <span class="badge bg-{% if profile_user.role == 'admin' %}danger{% elif profile_user.role == 'moderator' %}warning{% else %}info{% endif %}">
+                            {{ profile_user.get_role_display }}
+                        </span>
+                    </p>
+                    
+                    {% if profile_user.bio %}
+                    <p class="card-text">{{ profile_user.bio }}</p>
+                    {% endif %}
+                    
+                    {% if profile_user.steam_profile %}
+                    <p>
+                        <a href="{{ profile_user.steam_profile }}" target="_blank" class="btn btn-sm btn-dark">
+                            <i class="bi bi-steam"></i> Steam Профіль
+                        </a>
+                    </p>
+                    {% endif %}
+                    
+                    <p class="text-muted small">
+                        Зареєстрований: {{ profile_user.date_joined|date:"d.m.Y" }}
+                    </p>
+                    
+                    {% if is_own_profile %}
+                    <div class="mt-3">
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-outline-primary">
+                            Редагувати профіль
+                        </a>
+                        <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-secondary">
+                            Змінити пароль
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    {% if user.is_moderator and not is_own_profile %}
+                    <div class="mt-3">
+                        <a href="{% url 'accounts:user_role_update' profile_user.pk %}" class="btn btn-sm btn-warning">
+                            Змінити роль
+                        </a>
+                        {% if user.is_admin %}
+                        <a href="{% url 'accounts:user_delete' profile_user.pk %}" class="btn btn-sm btn-danger">
+                            Видалити
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <ul class="nav nav-tabs mb-4" id="profileTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="posts-tab" data-bs-toggle="tab" 
+                            data-bs-target="#posts" type="button" role="tab">
+                        Пости ({{ posts|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="portfolio-tab" data-bs-toggle="tab" 
+                            data-bs-target="#portfolio" type="button" role="tab">
+                        Портфоліо ({{ portfolio_items|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" 
+                            data-bs-target="#gallery" type="button" role="tab">
+                        Галерея ({{ gallery_items|length }})
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="topics-tab" data-bs-toggle="tab" 
+                            data-bs-target="#topics" type="button" role="tab">
+                        Темы форуму ({{ topics|length }})
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="profileTabContent">
+                <div class="tab-pane fade show active" id="posts" role="tabpanel">
+                    {% if posts %}
+                    <div class="list-group">
+                        {% for post in posts %}
+                        <div class="list-group-item">
+                            <p>{{ post.content|truncatewords:30 }}</p>
+                            <small class="text-muted">
+                                {{ post.created_at|date:"d.m.Y H:i" }}
+                                | Лайків: {{ post.likes.count }}
+                                | Коментарів: {{ post.comments.count }}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Поки що немає постів.
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="tab-pane fade" id="portfolio" role="tabpanel">
+                    {% if portfolio_items %}
+                    <div class="row">
+                        {% for item in portfolio_items %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>{{ item.title }}</h6>
+                                    <p class="small">{{ item.description|truncatewords:20 }}</p>
+                                    <span class="badge bg-info">{{ item.get_item_type_display }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Поки що немає елементів портфоліо.
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="tab-pane fade" id="gallery" role="tabpanel">
+                    {% if gallery_items %}
+                    <div class="row">
+                        {% for item in gallery_items %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                {% if item.file.url|lower|slice:"-4:" == '.jpg' or item.file.url|lower|slice:"-5:" == '.jpeg' or item.file.url|lower|slice:"-4:" == '.png' %}
+                                <img src="{{ item.file.url }}" class="card-img-top" alt="{{ item.title }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <p class="small">{{ item.title|default:"Без назви" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Поки що немає медіа в галереї.
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="tab-pane fade" id="topics" role="tabpanel">
+                    {% if topics %}
+                    <div class="list-group">
+                        {% for topic in topics %}
+                        <a href="{% url 'forum:topic_detail' topic.pk %}" class="list-group-item list-group-item-action">
+                            <h6>{{ topic.title }}</h6>
+                            <small class="text-muted">
+                                {{ topic.created_at|date:"d.m.Y" }}
+                                | Повідомлень: {{ topic.messages.count }}
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Поки що немає тем на форумі.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

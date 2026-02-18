@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block title %}FAQ | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Часті питання (FAQ)</h1>
+    
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="list-group">
+                <a href="#general" class="list-group-item list-group-item-action">Загальні питання</a>
+                <a href="#account" class="list-group-item list-group-item-action">Акаунт</a>
+                <a href="#content" class="list-group-item list-group-item-action">Контент</a>
+                <a href="#technical" class="list-group-item list-group-item-action">Технічні питання</a>
+                <a href="#rules" class="list-group-item list-group-item-action">Правила</a>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card mb-4" id="general">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Загальні питання</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqGeneral">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#general1">
+                                    Що таке CS2 MicroTwitter?
+                                </button>
+                            </h2>
+                            <div id="general1" class="accordion-collapse collapse show" data-bs-parent="#faqGeneral">
+                                <div class="accordion-body">
+                                    CS2 MicroTwitter — це соціальна мережа для фанатів Counter-Strike 2, де можна ділитися хайлайтами, обговорювати матчі та патчі, голосувати за найкращі моменти.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general2">
+                                    Чи потрібна реєстрація?
+                                </button>
+                            </h2>
+                            <div id="general2" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                                <div class="accordion-body">
+                                    Так, для створення постів, коментарів, завантаження медіа та участі в голосуваннях потрібна реєстрація. Переглядати контент можна без реєстрації.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#general3">
+                                    Скільки коштує користування сайтом?
+                                </button>
+                            </h2>
+                            <div id="general3" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                                <div class="accordion-body">
+                                    Сайт повністю безкоштовний. Ви можете підтримати проект фінансово в розділі "Підтримка", але це не обов'язково.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="account">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Акаунт</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccount">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#account1">
+                                    Як зареєструватися?
+                                </button>
+                            </h2>
+                            <div id="account1" class="accordion-collapse collapse show" data-bs-parent="#faqAccount">
+                                <div class="accordion-body">
+                                    Натисніть "Реєстрація" у верхньому меню, заповніть форму з ім'ям користувача, email та паролем. Після цього ви зможете увійти.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account2">
+                                    Як змінити пароль?
+                                </button>
+                            </h2>
+                            <div id="account2" class="accordion-collapse collapse" data-bs-parent="#faqAccount">
+                                <div class="accordion-body">
+                                    У своєму профілі натисніть "Змінити пароль", введіть старий та новий пароль.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account3">
+                                    Що робити, якщо забув пароль?
+                                </button>
+                            </h2>
+                            <div id="account3" class="accordion-collapse collapse" data-bs-parent="#faqAccount">
+                                <div class="accordion-body">
+                                    На сторінці входу натисніть "Забули пароль?" та введіть email. Ми надішлемо інструкції для скидання пароля.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#account4">
+                                    Як видалити акаунт?
+                                </button>
+                            </h2>
+                            <div id="account4" class="accordion-collapse collapse" data-bs-parent="#faqAccount">
+                                <div class="accordion-body">
+                                    Напишіть в службу підтримки через форму контактів, і ми допоможемо видалити акаунт.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="content">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Контент</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqContent">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#content1">
+                                    Які типи медіа можна завантажувати?
+                                </button>
+                            </h2>
+                            <div id="content1" class="accordion-collapse collapse show" data-bs-parent="#faqContent">
+                                <div class="accordion-body">
+                                    В галерею: зображення (JPG, PNG, GIF), відео (MP4, WebM). В портфоліо: демо-файли, скріншоти, відео.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#content2">
+                                    Чому мій пост не видно?
+                                </button>
+                            </h2>
+                            <div id="content2" class="accordion-collapse collapse" data-bs-parent="#faqContent">
+                                <div class="accordion-body">
+                                    Пости публікуються одразу. Якщо ви завантажили медіа в галерею або портфоліо, воно з'явиться після перевірки модератором.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#content3">
+                                    Як додати хештеги?
+                                </button>
+                            </h2>
+                            <div id="content3" class="accordion-collapse collapse" data-bs-parent="#faqContent">
+                                <div class="accordion-body">
+                                    При створенні поста введіть хештеги через кому, наприклад: #mirage, #awp, #highlight.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#content4">
+                                    Чи можна редагувати пост після публікації?
+                                </button>
+                            </h2>
+                            <div id="content4" class="accordion-collapse collapse" data-bs-parent="#faqContent">
+                                <div class="accordion-body">
+                                    Так, ви можете редагувати або видалити свій пост в будь-який час.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="technical">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Технічні питання</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqTechnical">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#tech1">
+                                    Чому сайт повільно працює?
+                                </button>
+                            </h2>
+                            <div id="tech1" class="accordion-collapse collapse show" data-bs-parent="#faqTechnical">
+                                <div class="accordion-body">
+                                    Спробуйте оновити сторінку або перевірити з'єднання з інтернетом. Якщо проблема повторюється, повідомте нам.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tech2">
+                                    Як повідомити про помилку?
+                                </button>
+                            </h2>
+                            <div id="tech2" class="accordion-collapse collapse" data-bs-parent="#faqTechnical">
+                                <div class="accordion-body">
+                                    Ви можете написати нам через форму контактів або створити issue на GitHub.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#tech3">
+                                    Чи є мобільний додаток?
+                                </button>
+                            </h2>
+                            <div id="tech3" class="accordion-collapse collapse" data-bs-parent="#faqTechnical">
+                                <div class="accordion-body">
+                                    Поки що немає, але сайт адаптований для мобільних пристроїв.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4" id="rules">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Правила</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqRules">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#rules1">
+                                    Що заборонено публікувати?
+                                </button>
+                            </h2>
+                            <div id="rules1" class="accordion-collapse collapse show" data-bs-parent="#faqRules">
+                                <div class="accordion-body">
+                                    Заборонено публікувати образливий контент, спам, рекламу, NSFW матеріали, а також контент, що порушує авторські права.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rules2">
+                                    Як повідомити про порушення?
+                                </button>
+                            </h2>
+                            <div id="rules2" class="accordion-collapse collapse" data-bs-parent="#faqRules">
+                                <div class="accordion-body">
+                                    Ви можете зв'язатися з модерацією через форму контактів або Telegram.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rules3">
+                                    Що робити, якщо мене заблокували?
+                                </button>
+                            </h2>
+                            <div id="rules3" class="accordion-collapse collapse" data-bs-parent="#faqRules">
+                                <div class="accordion-body">
+                                    Зверніться до служби підтримки для з'ясування причини блокування.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

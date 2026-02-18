@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Статус сайту | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Статус сайту</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Поточний стан</h5>
+            
+            <table class="table">
+                <tr>
+                    <th>База даних:</th>
+                    <td>
+                        {% if status.database == 'ok' %}
+                        <span class="badge bg-success">Працює</span>
+                        {% else %}
+                        <span class="badge bg-danger">Помилка</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Час відповіді:</th>
+                    <td>{{ status.response_time }} ms</td>
+                </tr>
+                <tr>
+                    <th>Серверний час:</th>
+                    <td>{{ status.server_time }}</td>
+                </tr>
+                <tr>
+                    <th>Користувачів онлайн:</th>
+                    <td>{{ status.users_online }}</td>
+                </tr>
+                <tr>
+                    <th>Всього користувачів:</th>
+                    <td>{{ status.total_users }}</td>
+                </tr>
+                <tr>
+                    <th>Всього постів:</th>
+                    <td>{{ status.total_posts }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

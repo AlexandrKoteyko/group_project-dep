@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.author.username }}: {{ post.content|truncatechars:50 }} | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% include 'posts/includes/post_card.html' with post=post %}
+                </div>
+            </div>
+            
+            <h5 class="mb-3">Коментарі ({{ comments.count }})</h5>
+            
+            {% if user.is_authenticated %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="post" action="{% url 'posts:add_comment' post.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ comment_form.content }}
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Додати коментар</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info mb-4">
+                <a href="{% url 'accounts:login' %}?next={% url 'posts:post_detail' post.pk %}">Увійдіть</a>, щоб додати коментар.
+            </div>
+            {% endif %}
+            
+            {% for comment in comments %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            {% if comment.author.avatar %}
+                            <img src="{{ comment.author.avatar.url }}" class="rounded-circle" width="32" height="32" style="object-fit: cover;">
+                            {% else %}
+                            <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 32px; height: 32px;">
+                                <span class="text-white small">{{ comment.author.username|first|upper }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <a href="{% url 'accounts:profile' comment.author.pk %}" class="fw-bold text-decoration-none">
+                                        {{ comment.author.username }}
+                                    </a>
+                                    <span class="text-muted small ms-2">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                                </div>
+                                {% if user == comment.author or user.is_moderator %}
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link" type="button" data-bs-toggle="dropdown">
+                                        ⋮
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{% url 'posts:comment_update' comment.pk %}">Редагувати</a></li>
+                                        <li><a class="dropdown-item text-danger" href="{% url 'posts:comment_delete' comment.pk %}">Видалити</a></li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p class="mb-0">{{ comment.content|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">
+                Поки що немає коментарів. Будьте першим!
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Про автора</h5>
+                    <div class="text-center mb-3">
+                        {% if post.author.avatar %}
+                        <img src="{{ post.author.avatar.url }}" class="rounded-circle" width="80" height="80" style="object-fit: cover;">
+                        {% else %}
+                        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mx-auto" 
+                             style="width: 80px; height: 80px;">
+                            <span class="text-white display-6">{{ post.author.username|first|upper }}</span>
+                        </div>
+                        {% endif %}
+                        <h6 class="mt-2">
+                            <a href="{% url 'accounts:profile' post.author.pk %}" class="text-decoration-none">
+                                {{ post.author.username }}
+                            </a>
+                        </h6>
+                        {% if post.author.bio %}
+                        <p class="small text-muted">{{ post.author.bio|truncatewords:20 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'posts:user_posts' post.author.pk %}" class="btn btn-outline-primary">
+                            Пости автора
+                        </a>
+                        <a href="{% url 'portfolio:user_portfolio' post.author.pk %}" class="btn btn-outline-secondary">
+                            Портфоліо автора
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

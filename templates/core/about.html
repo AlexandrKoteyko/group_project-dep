@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Про проект | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h1 class="mb-4">Про CS2 MicroTwitter</h1>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Наша місія</h5>
+                    <p class="card-text">
+                        CS2 MicroTwitter — це соціальна мережа, створена спеціально для фанатів Counter-Strike 2. 
+                        Наша мета — об'єднати гравців з усього світу, створити простір для обговорення матчів, 
+                        обміну хайлайтами та спілкування на тему улюбленої гри.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Що ми пропонуємо</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>📝 Мікроблогінг</strong> - короткі пости про CS2
+                        </li>
+                        <li class="list-group-item">
+                            <strong>💬 Форум</strong> - обговорення карт, патчів, турнірів
+                        </li>
+                        <li class="list-group-item">
+                            <strong>🖼️ Галерея</strong> - скріншоти, меми, кліпи
+                        </li>
+                        <li class="list-group-item">
+                            <strong>🏆 Портфоліо</strong> - хайлайти та демки гравців
+                        </li>
+                        <li class="list-group-item">
+                            <strong>📊 Голосування</strong> - вибір найкращих моментів
+                        </li>
+                        <li class="list-group-item">
+                            <strong>📅 Події</strong> - календар турнірів та конкурсів
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Для кого цей сайт</h5>
+                    <p class="card-text">
+                        CS2 MicroTwitter створений для всіх, хто цікавиться Counter-Strike 2:
+                    </p>
+                    <ul>
+                        <li>Казуальні гравці</li>
+                        <li>Кіберспортивні фанати</li>
+                        <li>Стрімери та контент-мейкери</li>
+                        <li>Професійні гравці</li>
+                        <li>Аналітики та коментатори</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Контактна інформація</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>Email:</strong> info@cs2microtwitter.com</li>
+                        <li><strong>Telegram:</strong> @cs2microtwitter</li>
+                        <li><strong>Discord:</strong> cs2-microtwitter</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-muted text-center">
+                <p>Версія: {{ version }}</p>
+                <p>Розроблено з ❤️ для спільноти CS2</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

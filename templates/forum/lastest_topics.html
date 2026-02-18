@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Останні теми | Форум | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Останні теми на форумі</h1>
+    
+    <div class="list-group">
+        {% for topic in topics %}
+        <div class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <div>
+                    <h5 class="mb-1">
+                        <a href="{% url 'forum:topic_detail' topic.pk %}" class="text-decoration-none">
+                            {{ topic.title }}
+                        </a>
+                    </h5>
+                    <small class="text-muted">
+                        Категорія: {{ topic.category.get_name_display }}
+                        | Автор: {{ topic.created_by.username }}
+                        | {{ topic.created_at|date:"d.m.Y H:i" }}
+                        | Повідомлень: {{ topic.messages.count }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            Поки що немає тем на форумі.
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-3">
+        <a href="{% url 'forum:category_list' %}" class="btn btn-outline-secondary">Назад до категорій</a>
+        <a href="{% url 'forum:topic_create' %}" class="btn btn-success ms-2">Створити тему</a>
+    </div>
+</div>
+{% endblock %}

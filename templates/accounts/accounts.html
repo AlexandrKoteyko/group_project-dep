@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Аккаунт{% endblock %}
+
+{% block content %}
+<h2>Особистий кабінет</h2>
+
+{% if user.is_authenticated %}
+    <p>Вітаю, {{ user.username }}!</p>
+{% else %}
+    <p>Увійдіть або зареєструйтесь</p>
+{% endif %}
+{% endblock %}

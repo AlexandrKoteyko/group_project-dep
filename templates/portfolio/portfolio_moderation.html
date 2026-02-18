@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Модерація портфоліо | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Модерація портфоліо</h1>
+    
+    {% if portfolio_items %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Назва</th>
+                    <th>Автор</th>
+                    <th>Тип</th>
+                    <th>Дата</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in portfolio_items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>
+                        <a href="{% url 'portfolio:portfolio_item_detail' item.pk %}">
+                            {{ item.title }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'accounts:profile' item.user.pk %}">
+                            {{ item.user.username }}
+                        </a>
+                    </td>
+                    <td>{{ item.get_item_type_display }}</td>
+                    <td>{{ item.created_at|date:"d.m.Y H:i" }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <form method="post" action="{% url 'portfolio:approve_portfolio_item' item.pk %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success">Схвалити</button>
+                            </form>
+                            <a href="{% url 'portfolio:reject_portfolio_item' item.pk %}" class="btn btn-danger">Відхилити</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="Навігація по сторінках" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="alert alert-success">
+        <i class="bi bi-check-circle"></i>
+        Немає елементів портфоліо, що потребують перевірки.
+    </div>
+    {% endif %}
+    
+    <div class="mt-3">
+        <a href="{% url 'portfolio:portfolio_list' %}" class="btn btn-outline-secondary">Всі портфоліо</a>
+    </div>
+</div>
+{% endblock %}

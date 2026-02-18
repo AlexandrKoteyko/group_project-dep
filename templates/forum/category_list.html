@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Форум - Категорії | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Форум CS2</h1>
+    
+    <div class="row">
+        {% for category in categories %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ category.get_name_display }}</h5>
+                    <p class="card-text">{{ category.description }}</p>
+                    <a href="{% url 'forum:topic_by_category' category.id %}" class="btn btn-primary">
+                        Перейти до тем
+                        <span class="badge bg-light text-dark ms-2">{{ category.topics.count }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>Поки що немає категорій.</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="mt-4">
+        <a href="{% url 'forum:topic_create' %}" class="btn btn-success">Створити нову тему</a>
+        <a href="{% url 'forum:latest_topics' %}" class="btn btn-outline-secondary ms-2">Останні теми</a>
+    </div>
+</div>
+{% endblock %}

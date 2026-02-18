@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load material_tags %}
+{% block title %}
+{% if object %}Редагувати матеріал{% else %}Додати матеріал{% endif %} | CS2 MicroTwitter
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        {% if object %}
+                        Редагувати матеріал
+                        {% else %}
+                        Додати новий матеріал
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.title.label_tag }}
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.category.label_tag }}
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                            <div class="text-danger">{{ form.category.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.description.label_tag }}
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Завантаження файлу (обов'язкове одне з трьох)</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    {{ form.file.label_tag }}
+                                    {{ form.file }}
+                                    {% if form.file.errors %}
+                                    <div class="text-danger">{{ form.file.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Завантажте файл (наприклад, .cfg, .zip, .pdf)</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="text-center fw-bold">АБО</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.link.label_tag }}
+                                    {{ form.link }}
+                                    {% if form.link.errors %}
+                                    <div class="text-danger">{{ form.link.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Або вкажіть посилання на зовнішній ресурс</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p class="text-center fw-bold">АБО</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.youtube_embed.label_tag }}
+                                    {{ form.youtube_embed }}
+                                    {% if form.youtube_embed.errors %}
+                                    <div class="text-danger">{{ form.youtube_embed.errors }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Або додайте HTML код для вбудовування YouTube</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            {% if object %}
+                            <a href="{% url 'materials:material_detail' object.pk %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% else %}
+                            <a href="{% url 'materials:material_list' %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-primary">
+                                {% if object %}Зберегти зміни{% else %}Додати матеріал{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+</style>
+{% endblock %}

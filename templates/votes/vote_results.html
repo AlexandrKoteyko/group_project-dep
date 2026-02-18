@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Результати: {{ vote.title }} | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Результати голосування</h1>
+        <div>
+            <a href="{% url 'votes:vote_detail' vote.pk %}" class="btn btn-outline-secondary">
+                До голосування
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ vote.title }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">{{ vote.description }}</p>
+                    
+                    <h6 class="mb-3">Всього голосів: <span class="badge bg-primary">{{ total_votes }}</span></h6>
+                    
+                    {% for result in results %}
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-2">
+                            {% if result.option.image %}
+                            <img src="{{ result.option.image.url }}" alt="{{ result.option.text }}" 
+                                 class="me-2" style="max-width: 50px; max-height: 50px;">
+                            {% endif %}
+                            <h6 class="mb-0">{{ result.option.text }}</h6>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ result.option.votes }} голосів</span>
+                            <span>{{ result.percentage|floatformat:1 }}%</span>
+                        </div>
+                        <!-- Прогрес-бар для візуалізації відсотків -->
+                        <div class="progress">
+                            
+                            </div>
+                    {% empty %}
+                    <div class="alert alert-info">
+                        Ще немає голосів у цьому опитуванні.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Тип:</span>
+                            <span>{{ vote.get_vote_type_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Статус:</span>
+                            <span>
+                                {% if vote.is_active %}
+                                <span class="text-success">Активне</span>
+                                {% else %}
+                                <span class="text-secondary">Неактивне</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Всього голосів:</span>
+                            <span>{{ total_votes }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Варіантів:</span>
+                            <span>{{ vote.options.count }}</span>
+                        </li>
+                    </ul>
+                    
+                    {% if user_voted %}
+                    <div class="alert alert-success mt-3">
+                        <i class="bi bi-check-circle"></i> Ви взяли участь у голосуванні
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

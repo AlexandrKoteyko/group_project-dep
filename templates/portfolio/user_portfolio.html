@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Портфоліо {{ portfolio_user.username }} | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Портфоліо {{ portfolio_user.username }}</h1>
+            <p class="text-muted mb-0">Хайлайти та демки гравця</p>
+        </div>
+        <div>
+            {% if user == portfolio_user %}
+            <a href="{% url 'portfolio:portfolio_item_create' %}" class="btn btn-success">Додати хайлайт</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                {% for item in portfolio_items %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-info">{{ item.get_item_type_display }}</span>
+                                {% if item.role %}
+                                <span class="badge bg-warning">{{ item.get_role_display }}</span>
+                                {% endif %}
+                                {% if not item.is_approved %}
+                                <span class="badge bg-danger">На перевірці</span>
+                                {% endif %}
+                            </div>
+                            
+                            <h5 class="card-title">
+                                <a href="{% url 'portfolio:portfolio_item_detail' item.pk %}" class="text-decoration-none">
+                                    {{ item.title }}
+                                </a>
+                            </h5>
+                            
+                            <p class="card-text small">{{ item.description|truncatewords:20 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    {% if item.game_map %}
+                                    <small class="text-muted">{{ item.game_map }}</small>
+                                    {% endif %}
+                                </div>
+                                {% if item.weapon %}
+                                <small class="text-muted">{{ item.weapon }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <small class="text-muted">
+                                {{ item.created_at|date:"d.m.Y" }}
+                                {% if not item.is_approved %}
+                                | <span class="badge bg-warning">На перевірці</span>
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        У цього гравця поки що немає хайлайтів у портфоліо.
+                        {% if user == portfolio_user %}
+                        <a href="{% url 'portfolio:portfolio_item_create' %}" class="alert-link">Додайте свій перший хайлайт!</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if is_paginated %}
+            <nav aria-label="Навігація по сторінках" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    {% if portfolio_user.avatar %}
+                    <img src="{{ portfolio_user.avatar.url }}" 
+                         alt="{{ portfolio_user.username }}" 
+                         class="rounded-circle mb-3"
+                         style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mb-3 mx-auto"
+                         style="width: 100px; height: 100px;">
+                        <span class="text-white display-6">{{ portfolio_user.username|first|upper }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <h5 class="card-title">{{ portfolio_user.username }}</h5>
+                    
+                    {% if portfolio_user.bio %}
+                    <p class="card-text small">{{ portfolio_user.bio|truncatewords:20 }}</p>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:profile' portfolio_user.pk %}" class="btn btn-outline-primary">
+                            Переглянути профіль
+                        </a>
+                        {% if user == portfolio_user %}
+                        <a href="{% url 'portfolio:portfolio_item_create' %}" class="btn btn-success">
+                            Додати хайлайт
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Статистика</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Всього хайлайтів:</span>
+                            <span>{{ portfolio_items.paginator.count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Схвалені:</span>
+                            <span>{{ portfolio_items|length|default:0 }}</span>
+                        </li>
+                        {% if user == portfolio_user %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>На перевірці:</span>
+                            <span>
+                                {% with pending=portfolio_items|length|default:0 %}
+                                {{ portfolio_items|length|default:0 }}
+                                {% endwith %}
+                            </span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Реєстрація | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">Реєстрація</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.username.label_tag }}
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Введіть унікальне ім'я користувача.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.email.label_tag }}
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form.password1.label_tag }}
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}
+                                <div class="text-danger">{{ form.password1.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.password2.label_tag }}
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}
+                                <div class="text-danger">{{ form.password2.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.bio.label_tag }}
+                            {{ form.bio }}
+                            {% if form.bio.errors %}
+                            <div class="text-danger">{{ form.bio.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Розкажіть трохи про себе (необов'язково).</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.avatar.label_tag }}
+                            {{ form.avatar }}
+                            {% if form.avatar.errors %}
+                            <div class="text-danger">{{ form.avatar.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.steam_profile.label_tag }}
+                            {{ form.steam_profile }}
+                            {% if form.steam_profile.errors %}
+                            <div class="text-danger">{{ form.steam_profile.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Посилання на ваш Steam профіль (необов'язково).</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Зареєструватися</button>
+                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary">
+                                Вже маєте акаунт? Увійти
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input, textarea, select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+</style>
+{% endblock %}

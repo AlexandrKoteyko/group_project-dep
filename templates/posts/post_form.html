@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if object %}Редагувати пост{% else %}Створити пост{% endif %} | CS2 MicroTwitter
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        {% if object %}
+                        Редагувати пост
+                        {% else %}
+                        Створити новий пост
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.content.label_tag }}
+                            {{ form.content }}
+                            <div class="form-text">
+                                Максимум 280 символів. Залишилось: <span id="charCount">280</span>
+                            </div>
+                            {% if form.content.errors %}
+                            <div class="text-danger">{{ form.content.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.hashtags.label_tag }}
+                            {{ form.hashtags }}
+                            <div class="form-text">{{ form.hashtags.help_text }}</div>
+                            {% if form.hashtags.errors %}
+                            <div class="text-danger">{{ form.hashtags.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.media_type.label_tag }}
+                            {{ form.media_type }}
+                            {% if form.media_type.errors %}
+                            <div class="text-danger">{{ form.media_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3" id="mediaFileField">
+                            {{ form.media_file.label_tag }}
+                            {{ form.media_file }}
+                            {% if form.media_file.errors %}
+                            <div class="text-danger">{{ form.media_file.errors }}</div>
+                            {% endif %}
+                            {% if object and object.media_file %}
+                            <div class="mt-2">
+                                <p>Поточний файл: {{ object.media_file.name|slice:"12:" }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            {% if object %}
+                            <a href="{% url 'posts:post_detail' object.pk %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% else %}
+                            <a href="{% url 'posts:post_list' %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-primary">
+                                {% if object %}Зберегти зміни{% else %}Опублікувати{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Підрахунок символів
+    const contentField = document.getElementById('id_content');
+    const charCount = document.getElementById('charCount');
+    
+    contentField.addEventListener('input', function() {
+        const remaining = 280 - this.value.length;
+        charCount.textContent = remaining;
+        if (remaining < 0) {
+            charCount.classList.add('text-danger');
+        } else {
+            charCount.classList.remove('text-danger');
+        }
+    });
+    
+    // Показувати/ховати поле для файлу в залежності від вибраного типу медіа
+    const mediaTypeField = document.getElementById('id_media_type');
+    const mediaFileField = document.getElementById('mediaFileField');
+    
+    function toggleMediaFile() {
+        if (mediaTypeField.value === 'none') {
+            mediaFileField.style.display = 'none';
+        } else {
+            mediaFileField.style.display = 'block';
+        }
+    }
+    
+    mediaTypeField.addEventListener('change', toggleMediaFile);
+    toggleMediaFile(); // Викликаємо при завантаженні
+</script>
+{% endblock %}

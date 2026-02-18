@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load material_tags %}
+{% block title %}Матеріали | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Матеріали CS2</h1>
+        {% if user.is_moderator %}
+        <a href="{% url 'materials:material_create' %}" class="btn btn-success">Додати матеріал</a>
+        {% endif %}
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                {% for material in materials %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-info">{{ material.get_category_display }}</span>
+                                {% if material.downloads > 0 %}
+                                <small class="text-muted">{{ material.downloads }} завантажень</small>
+                                {% endif %}
+                            </div>
+                            
+                            <h5 class="card-title">
+                                <a href="{% url 'materials:material_detail' material.pk %}" class="text-decoration-none">
+                                    {{ material.title }}
+                                </a>
+                            </h5>
+                            
+                            <p class="card-text small">{{ material.description|truncatewords:20 }}</p>
+                            
+                            <div class="mt-auto">
+                                {% if material.file %}
+                                <a href="{% url 'materials:material_download' material.pk %}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-download"></i> Завантажити
+                                </a>
+                                {% elif material.link %}
+                                <a href="{{ material.link }}" target="_blank" class="btn btn-sm btn-secondary">
+                                    <i class="bi bi-link"></i> Посилання
+                                </a>
+                                {% elif material.youtube_embed %}
+                                <span class="badge bg-danger">YouTube</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <small class="text-muted">
+                                {{ material.created_at|date:"d.m.Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Поки що немає матеріалів.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if is_paginated %}
+            <nav aria-label="Навігація по сторінках" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Категорії</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'materials:material_list' %}" class="list-group-item list-group-item-action d-flex justify-content-between">
+                            Всі матеріали
+                            <span class="badge bg-primary rounded-pill">
+                                {{ materials.paginator.count }}
+                            </span>
+                        </a>
+                        {% for category_value, category_name in categories %}
+                        <a href="{% url 'materials:material_by_category' category_value %}" 
+                           class="list-group-item list-group-item-action d-flex justify-content-between">
+                            {{ category_name }}
+                            <span class="badge bg-info rounded-pill">
+                                {{ category_counts|get_item:category_value|default:0 }}
+                            </span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Пошук матеріалів</h5>
+                    <form method="get" action="{% url 'materials:material_search' %}" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Пошук...">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'materials:popular_materials' %}" class="btn btn-outline-primary">
+                            Популярні матеріали
+                        </a>
+                        {% if user.is_moderator %}
+                        <a href="{% url 'materials:material_create' %}" class="btn btn-success">
+                            Додати матеріал
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Типи вмісту</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-file-earmark-text text-primary"></i>
+                            <span class="ms-2">Файли для завантаження</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-link text-success"></i>
+                            <span class="ms-2">Посилання на ресурси</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-youtube text-danger"></i>
+                            <span class="ms-2">YouTube відео</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

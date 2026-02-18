@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load material_tags %}
+{% block title %}{{ material.title }} | Матеріали | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ material.title }}</h1>
+        <div>
+            {% if user.is_moderator %}
+            <a href="{% url 'materials:material_update' material.pk %}" class="btn btn-outline-primary">Редагувати</a>
+            <a href="{% url 'materials:material_delete' material.pk %}" class="btn btn-outline-danger">Видалити</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-info">{{ material.get_category_display }}</span>
+                            <span class="badge bg-secondary ms-1">{{ material.downloads }} завантажень</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">
+                                Додано: {{ material.created_at|date:"d.m.Y H:i" }}
+                                {% if material.updated_at != material.created_at %}
+                                <br><small>(оновлено: {{ material.updated_at|date:"d.m.Y H:i" }})</small>
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p>{{ material.description|linebreaks }}</p>
+                    </div>
+                    
+                    {% if material.file %}
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-file-earmark-text"></i> Файл для завантаження
+                            </h6>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-0">{{ material.file.name|slice:"10:" }}</p>
+                                    <small class="text-muted">
+                                        Розмір: {{ material.file.size|filesizeformat }}
+                                    </small>
+                                </div>
+                                <a href="{% url 'materials:material_download' material.pk %}" class="btn btn-primary">
+                                    <i class="bi bi-download"></i> Завантажити
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if material.link %}
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-link"></i> Посилання
+                            </h6>
+                            <a href="{{ material.link }}" target="_blank" class="btn btn-secondary">
+                                <i class="bi bi-box-arrow-up-right"></i> Перейти за посиланням
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if material.youtube_embed %}
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-youtube text-danger"></i> YouTube відео
+                            </h6>
+                            <div class="ratio ratio-16x9">
+                                {{ material.youtube_embed|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація про матеріал</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Категорія:</span>
+                            <span>{{ material.get_category_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Завантажень:</span>
+                            <span>{{ material.downloads }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Додано:</span>
+                            <span>{{ material.created_at|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% if material.updated_at != material.created_at %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Оновлено:</span>
+                            <span>{{ material.updated_at|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            
+            {% if similar_materials %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Подібні матеріали</h5>
+                    <div class="list-group list-group-flush">
+                        {% for similar in similar_materials %}
+                        <a href="{% url 'materials:material_detail' similar.pk %}" 
+                           class="list-group-item list-group-item-action">
+                            <h6 class="mb-1">{{ similar.title }}</h6>
+                            <small class="text-muted">{{ similar.created_at|date:"d.m.Y" }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Навігація</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'materials:material_list' %}" class="list-group-item list-group-item-action">
+                            ← Всі матеріали
+                        </a>
+                        <a href="{% url 'materials:material_by_category' material.category %}" 
+                           class="list-group-item list-group-item-action">
+                            Матеріали категорії "{{ material.get_category_display }}"
+                        </a>
+                        <a href="{% url 'materials:popular_materials' %}" class="list-group-item list-group-item-action">
+                            Популярні матеріали
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

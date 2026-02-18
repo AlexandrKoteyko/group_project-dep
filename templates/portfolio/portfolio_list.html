@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Портфоліо гравців | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Портфоліо гравців CS2</h1>
+        {% if user.is_authenticated %}
+        <a href="{% url 'portfolio:portfolio_item_create' %}" class="btn btn-success">Додати хайлайт</a>
+        {% endif %}
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="row">
+                {% for item in portfolio_items %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-info">{{ item.get_item_type_display }}</span>
+                                {% if item.role %}
+                                <span class="badge bg-warning">{{ item.get_role_display }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <h5 class="card-title">
+                                <a href="{% url 'portfolio:portfolio_item_detail' item.pk %}" class="text-decoration-none">
+                                    {{ item.title }}
+                                </a>
+                            </h5>
+                            
+                            <p class="card-text small">{{ item.description|truncatewords:20 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                    <small class="text-muted">
+                                        <a href="{% url 'accounts:profile' item.user.pk %}" class="text-decoration-none">
+                                            {{ item.user.username }}
+                                        </a>
+                                    </small>
+                                </div>
+                                {% if item.game_map %}
+                                <small class="text-muted">{{ item.game_map }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <small class="text-muted">
+                                {{ item.created_at|date:"d.m.Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Поки що немає хайлайтів у портфоліо.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if is_paginated %}
+            <nav aria-label="Навігація по сторінках" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Фільтри</h5>
+                    
+                    <div class="mb-3">
+                        <h6 class="card-subtitle mb-2">За типом:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for type_value, type_name in item_types %}
+                            <a href="{% url 'portfolio:portfolio_by_type' type_value %}" 
+                               class="btn btn-sm btn-outline-primary">
+                                {{ type_name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6 class="card-subtitle mb-2">За роллю:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for role_value, role_name in roles %}
+                            <a href="{% url 'portfolio:portfolio_by_role' role_value %}" 
+                               class="btn btn-sm btn-outline-warning">
+                                {{ role_name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Пошук портфоліо</h5>
+                    <form method="get" action="{% url 'portfolio:portfolio_search' %}" class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Пошук...">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="d-grid gap-2">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'portfolio:user_portfolio' user.pk %}" class="btn btn-outline-primary">
+                            Моє портфоліо
+                        </a>
+                        <a href="{% url 'portfolio:portfolio_item_create' %}" class="btn btn-success">
+                            Додати хайлайт
+                        </a>
+                        {% endif %}
+                        
+                        {% if user.is_moderator %}
+                        <a href="{% url 'portfolio:portfolio_moderation' %}" class="btn btn-outline-danger">
+                            Модерація
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Популярні карти</h5>
+                    <div class="list-group list-group-flush">
+                        {% with popular_maps="Mirage,Dust2,Inferno,Nuke,Overpass,Vertigo,Ancient" %}
+                        {% for map_name in popular_maps.split %}
+                        <a href="{% url 'portfolio:portfolio_by_map' map_name|lower %}" 
+                           class="list-group-item list-group-item-action">
+                            {{ map_name }}
+                        </a>
+                        {% endfor %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if object %}Редагувати тему{% else %}Створити тему{% endif %} | Форум | CS2 MicroTwitter
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="mb-4">
+                {% if object %}
+                Редагувати тему
+                {% else %}
+                Створити нову тему
+                {% endif %}
+            </h1>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    {{ form.category.label_tag }}
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                    <div class="text-danger">{{ form.category.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                    <div class="text-danger">{{ form.title.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.content.label_tag }}
+                    {{ form.content }}
+                    {% if form.content.errors %}
+                    <div class="text-danger">{{ form.content.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{% if object %}{% url 'forum:topic_detail' object.pk %}{% else %}{% url 'forum:category_list' %}{% endif %}" 
+                       class="btn btn-secondary">
+                        Скасувати
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        {% if object %}Зберегти зміни{% else %}Створити тему{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

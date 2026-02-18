@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Пошук у галереї | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Пошук у галереї</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="{% url 'gallery:gallery_search' %}">
+                <div class="row">
+                    <div class="col-md-10">
+                        <input type="text" name="q" class="form-control" 
+                               placeholder="Пошук медіа..." value="{{ query }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Пошук</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if query %}
+    <p class="mb-3">Результати пошуку для: <strong>"{{ query }}"</strong></p>
+    {% endif %}
+    
+    {% if media_items %}
+    <div class="row">
+        {% for item in media_items %}
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card h-100">
+                <div class="position-relative" style="padding-top: 100%; overflow: hidden;">
+                    {% if item.file.url|lower|slice:'-4:' == '.jpg' or item.file.url|lower|slice:'-5:' == '.jpeg' or item.file.url|lower|slice:'-4:' == '.png' %}
+                    <img src="{{ item.file.url }}" class="position-absolute top-0 start-0 w-100 h-100" 
+                         style="object-fit: cover;" alt="{{ item.title }}">
+                    {% else %}
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-secondary d-flex align-items-center justify-content-center">
+                        <i class="bi bi-file-earmark text-white" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <span class="position-absolute top-0 start-0 badge bg-info m-2">
+                        {{ item.get_media_type_display }}
+                    </span>
+                </div>
+                <div class="card-body p-2">
+                    <h6 class="card-title small">
+                        <a href="{% url 'gallery:media_detail' item.pk %}" class="text-decoration-none">
+                            {{ item.title|default:"Без назви"|truncatechars:20 }}
+                        </a>
+                    </h6>
+                    <div class="d-flex justify-content-between">
+                        <small class="text-muted">
+                            <a href="{% url 'accounts:profile' item.user.pk %}">{{ item.user.username }}</a>
+                        </small>
+                        <small class="text-muted">
+                            <i class="bi bi-heart"></i> {{ item.likes }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="Навігація по сторінках" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">Попередня</a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">Наступна</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="alert alert-info">
+        {% if query %}
+        За вашим запитом нічого не знайдено.
+        {% else %}
+        Введіть запит для пошуку.
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <div class="mt-3">
+        <a href="{% url 'gallery:gallery_list' %}" class="btn btn-outline-secondary">Повернутися до галереї</a>
+    </div>
+</div>
+{% endblock %}

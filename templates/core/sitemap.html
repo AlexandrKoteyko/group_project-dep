@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Карта сайту | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Карта сайту</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Основні розділи</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="{% url 'core:home' %}">🏠 Головна</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'posts:post_list' %}">📝 Пости</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'forum:category_list' %}">💬 Форум</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'gallery:gallery_list' %}">🖼️ Галерея</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'portfolio:portfolio_list' %}">🏆 Портфоліо</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'events:event_list' %}">📅 Події</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'votes:vote_list' %}">📊 Голосування</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'announcements:announcement_list' %}">📢 Оголошення</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'materials:material_list' %}">📚 Матеріали</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Інформаційні сторінки</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="{% url 'core:about' %}">ℹ️ Про проект</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:rules' %}">📜 Правила</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:faq' %}">❓ FAQ</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:help' %}">🆘 Допомога</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:contact' %}">📧 Контакти</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:support' %}">❤️ Підтримка</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:stats' %}">📈 Статистика</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:status' %}">🔧 Статус</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'core:api_info' %}">🔌 API</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Користувацькі розділи</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        {% if user.is_authenticated %}
+                        <li class="list-group-item">
+                            <a href="{% url 'accounts:profile' user.pk %}">👤 Мій профіль</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'accounts:profile_edit' %}">⚙️ Налаштування</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'posts:user_posts' user.pk %}">📝 Мої пости</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'gallery:user_gallery' user.pk %}">🖼️ Моя галерея</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'portfolio:user_portfolio' user.pk %}">🏆 Моє портфоліо</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'posts:post_create' %}">➕ Новий пост</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'gallery:media_upload' %}">📤 Завантажити медіа</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'portfolio:portfolio_item_create' %}">✨ Додати хайлайт</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'accounts:password_change' %}">🔐 Змінити пароль</a>
+                        </li>
+                        {% else %}
+                        <li class="list-group-item">
+                            <a href="{% url 'accounts:login' %}">🔑 Увійти</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'accounts:signup' %}">📝 Реєстрація</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'accounts:password_reset' %}">🔄 Скинути пароль</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if user.is_moderator %}
+                        <li class="list-group-item">
+                            <a href="{% url 'gallery:gallery_moderation' %}">🔨 Модерація галереї</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'portfolio:portfolio_moderation' %}">🔨 Модерація портфоліо</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if user.is_admin %}
+                        <li class="list-group-item">
+                            <a href="{% url 'accounts:user_list' %}">👥 Користувачі</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="{% url 'admin:index' %}">⚡ Адмін панель</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Пошук</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{% url 'core:global_search' %}" method="get">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control" placeholder="Пошук по сайту...">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i> Пошук
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

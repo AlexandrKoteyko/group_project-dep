@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Статистика сайту | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Статистика сайту</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_users }}</h3>
+                    <p class="text-muted">Користувачів</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_posts }}</h3>
+                    <p class="text-muted">Постів</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_topics }}</h3>
+                    <p class="text-muted">Тем на форумі</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_gallery }}</h3>
+                    <p class="text-muted">Медіа в галереї</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Активність за останні 7 днів</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Пости</th>
+                                <th>Теми</th>
+                                <th>Нові користувачі</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in activity %}
+                            <tr>
+                                <td>{{ day.date }}</td>
+                                <td>{{ day.posts }}</td>
+                                <td>{{ day.topics }}</td>
+                                <td>{{ day.users }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Топ-5 користувачів за постами</h5>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        {% for user in top_posters %}
+                        <li>
+                            <a href="{% url 'accounts:profile' user.pk %}">
+                                {{ user.username }}
+                            </a> - {{ user.post_count }} постів
+                        </li>
+                        {% empty %}
+                        <li>Немає даних</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">За останній тиждень</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Нових користувачів:</span>
+                            <span class="badge bg-primary">{{ new_users_week }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Нових постів:</span>
+                            <span class="badge bg-success">{{ new_posts_week }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Нових тем:</span>
+                            <span class="badge bg-info">{{ new_topics_week }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">За останній місяць</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Нових користувачів:</span>
+                            <span class="badge bg-primary">{{ new_users_month }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Нових постів:</span>
+                            <span class="badge bg-success">{{ new_posts_month }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Нових тем:</span>
+                            <span class="badge bg-info">{{ new_topics_month }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Загальна статистика</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Коментарів:</span>
+                            <span>{{ total_comments|default:"0" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Повідомлень на форумі:</span>
+                            <span>{{ total_messages|default:"0" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Елементів портфоліо:</span>
+                            <span>{{ total_portfolio|default:"0" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Опитувань:</span>
+                            <span>{{ total_surveys|default:"0" }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Голосувань:</span>
+                            <span>{{ total_votes|default:"0" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

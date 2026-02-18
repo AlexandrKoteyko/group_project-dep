@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CS2 MicroTwitter{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        .navbar-nav .nav-link {
+            padding: 0.5rem 1rem;
+        }
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .dropdown-menu {
+            background-color: #343a40;
+        }
+        .dropdown-item {
+            color: white;
+        }
+        .dropdown-item:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .footer {
+            margin-top: 3rem;
+            padding: 2rem 0;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:home' %}">
+                <i class="bi bi-controller"></i> CS2 MicroTwitter
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'posts' %}active{% endif %}" 
+                           href="{% url 'posts:post_list' %}">
+                            <i class="bi bi-house-door"></i> Пости
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if request.resolver_match.app_name == 'forum' %}active{% endif %}" 
+                           href="#" id="forumDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-chat"></i> Форум
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'forum:category_list' %}">Категорії</a></li>
+                            <li><a class="dropdown-item" href="{% url 'forum:latest_topics' %}">Останні теми</a></li>
+                            <li><a class="dropdown-item" href="{% url 'forum:forum_search' %}">Пошук</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if request.resolver_match.app_name == 'gallery' %}active{% endif %}" 
+                           href="#" id="galleryDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-images"></i> Галерея
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'gallery:gallery_list' %}">Всі медіа</a></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:popular_media' %}">Популярні</a></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:latest_media' %}">Останні</a></li>
+                            {% if user.is_authenticated %}
+                            <li><a class="dropdown-item" href="{% url 'gallery:user_gallery' user.pk %}">Моя галерея</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:media_upload' %}">Завантажити</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'portfolio' %}active{% endif %}" 
+                           href="{% url 'portfolio:portfolio_list' %}">
+                            <i class="bi bi-trophy"></i> Портфоліо
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="eventsDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-calendar-event"></i> Події
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'events:event_list' %}">Всі події</a></li>
+                            <li><a class="dropdown-item" href="{% url 'events:upcoming_events' %}">Майбутні</a></li>
+                            <li><a class="dropdown-item" href="{% url 'events:past_events' %}">Минулі</a></li>
+                            <li><a class="dropdown-item" href="{% url 'events:event_calendar' %}">Календар</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'votes' %}active{% endif %}" 
+                           href="{% url 'votes:vote_list' %}">
+                            <i class="bi bi-bar-chart"></i> Голосування
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'announcements' %}active{% endif %}" 
+                           href="{% url 'announcements:announcement_list' %}">
+                            <i class="bi bi-megaphone"></i> Оголошення
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.app_name == 'materials' %}active{% endif %}" 
+                           href="{% url 'materials:material_list' %}">
+                            <i class="bi bi-file-earmark-text"></i> Матеріали
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="coreDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-info-circle"></i> Інфо
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'core:about' %}">Про проект</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core:rules' %}">Правила</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core:faq' %}">FAQ</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core:help' %}">Допомога</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core:stats' %}">Статистика</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core:status' %}">Статус</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'core:contact' %}">Контакти</a></li>
+                            <li><a class="dropdown-item" href="{% url 'core:support' %}">Підтримка</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:global_search' %}">
+                            <i class="bi bi-search"></i>
+                        </a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" class="rounded-circle" width="24" height="24" style="object-fit: cover;">
+                            {% else %}
+                            <i class="bi bi-person-circle"></i>
+                            {% endif %}
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' user.pk %}">
+                                <i class="bi bi-person"></i> Мій профіль
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile_edit' %}">
+                                <i class="bi bi-gear"></i> Налаштування
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'portfolio:user_portfolio' user.pk %}">
+                                <i class="bi bi-trophy"></i> Моє портфоліо
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:user_gallery' user.pk %}">
+                                <i class="bi bi-images"></i> Моя галерея
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% if user.is_moderator %}
+                            <li><a class="dropdown-item text-warning" href="{% url 'gallery:gallery_moderation' %}">
+                                <i class="bi bi-shield-check"></i> Модерація галереї
+                            </a></li>
+                            <li><a class="dropdown-item text-warning" href="{% url 'portfolio:portfolio_moderation' %}">
+                                <i class="bi bi-shield-check"></i> Модерація портфоліо
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            {% if user.is_admin %}
+                            <li><a class="dropdown-item text-danger" href="{% url 'accounts:user_list' %}">
+                                <i class="bi bi-people"></i> Користувачі
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Вийти
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">
+                            <i class="bi bi-box-arrow-in-right"></i> Увійти
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:signup' %}">
+                            <i class="bi bi-person-plus"></i> Реєстрація
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="bi bi-controller"></i> CS2 MicroTwitter</h5>
+                    <p class="text-muted">Соціальна мережа для фанатів Counter-Strike 2</p>
+                </div>
+                <div class="col-md-2">
+                    <h6>Спільнота</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'posts:post_list' %}" class="text-decoration-none">Пости</a></li>
+                        <li><a href="{% url 'forum:category_list' %}" class="text-decoration-none">Форум</a></li>
+                        <li><a href="{% url 'gallery:gallery_list' %}" class="text-decoration-none">Галерея</a></li>
+                        <li><a href="{% url 'portfolio:portfolio_list' %}" class="text-decoration-none">Портфоліо</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Активності</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'events:event_list' %}" class="text-decoration-none">Події</a></li>
+                        <li><a href="{% url 'votes:vote_list' %}" class="text-decoration-none">Голосування</a></li>
+                        <li><a href="{% url 'surveys:survey_list' %}" class="text-decoration-none">Опитування</a></li>
+                        <li><a href="{% url 'announcements:announcement_list' %}" class="text-decoration-none">Оголошення</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Інформація</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'core:about' %}" class="text-decoration-none">Про нас</a></li>
+                        <li><a href="{% url 'core:rules' %}" class="text-decoration-none">Правила</a></li>
+                        <li><a href="{% url 'core:faq' %}" class="text-decoration-none">FAQ</a></li>
+                        <li><a href="{% url 'core:contact' %}" class="text-decoration-none">Контакти</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Соцмережі</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-decoration-none"><i class="bi bi-telegram"></i> Telegram</a></li>
+                        <li><a href="#" class="text-decoration-none"><i class="bi bi-discord"></i> Discord</a></li>
+                        <li><a href="#" class="text-decoration-none"><i class="bi bi-github"></i> GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted">
+                <small>&copy; 2024 CS2 MicroTwitter. Всі права захищено.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

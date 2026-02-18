@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Популярні голосування | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Популярні голосування</h1>
+        <a href="{% url 'votes:vote_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Всі голосування
+        </a>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            {% include 'votes/includes/popular_list.html' %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація</h5>
+                    <p class="card-text">
+                        Тут показані голосування з найбільшою кількістю учасників.
+                    </p>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'votes:vote_list' %}" class="list-group-item list-group-item-action">
+                            Всі голосування
+                        </a>
+                        <a href="{% url 'votes:active_votes' %}" class="list-group-item list-group-item-action">
+                            Активні голосування
+                        </a>
+                        <a href="{% url 'votes:daily_vote' %}" class="list-group-item list-group-item-action">
+                            Голосування дня
+                        </a>
+                        <a href="{% url 'votes:weekly_vote' %}" class="list-group-item list-group-item-action">
+                            Голосування тижня
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ vote.title }} | Голосування | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="h3 mb-0">{{ vote.title }}</h1>
+                        <div>
+                            {% if user.is_moderator %}
+                            <a href="{% url 'votes:vote_update' vote.pk %}" class="btn btn-sm btn-outline-primary">
+                                Редагувати
+                            </a>
+                            <a href="{% url 'votes:vote_delete' vote.pk %}" class="btn btn-sm btn-outline-danger">
+                                Видалити
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <span class="badge bg-info">{{ vote.get_vote_type_display }}</span>
+                        {% if is_active %}
+                        <span class="badge bg-success">Активне</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Неактивне</span>
+                        {% endif %}
+                        {% if vote.end_date %}
+                        <span class="badge bg-warning">
+                            Закінчується: {{ vote.end_date|date:"d.m.Y H:i" }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if vote.description %}
+                    <p class="mb-4">{{ vote.description }}</p>
+                    {% endif %}
+                    
+                    <h5 class="mb-3">Варіанти відповідей:</h5>
+                    
+                    {% if is_active and user.is_authenticated and not has_voted %}
+                    <form method="post" action="{% url 'votes:vote_cast' vote.pk %}">
+                        {% csrf_token %}
+                        
+                        {% for option in vote.options.all %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" 
+                                           name="option" id="option{{ option.id }}" 
+                                           value="{{ option.id }}" required>
+                                    <label class="form-check-label" for="option{{ option.id }}">
+                                        <div class="d-flex align-items-center">
+                                            {% if option.image %}
+                                            <img src="{{ option.image.url }}" alt="{{ option.text }}" 
+                                                 class="me-2" style="max-width: 50px; max-height: 50px;">
+                                            {% endif %}
+                                            <span>{{ option.text }}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-success">Проголосувати</button>
+                            <a href="{% url 'votes:vote_results' vote.pk %}" class="btn btn-outline-info ms-2">
+                                Переглянути результати
+                            </a>
+                        </div>
+                    </form>
+                    
+                    {% elif has_voted %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-check-circle"></i> Ви вже проголосували в цьому опитуванні.
+                        <div class="mt-2">
+                            <a href="{% url 'votes:vote_results' vote.pk %}" class="btn btn-primary">
+                                Переглянути результати
+                            </a>
+                        </div>
+                    </div>
+                    
+                    {% elif not user.is_authenticated %}
+                    <div class="alert alert-warning">
+                        <a href="{% url 'accounts:login' %}?next={% url 'votes:vote_detail' vote.pk %}">Увійдіть</a>, 
+                        щоб проголосувати.
+                    </div>
+                    
+                    {% else %}
+                    <div class="alert alert-secondary">
+                        Це голосування закрите.
+                        <div class="mt-2">
+                            <a href="{% url 'votes:vote_results' vote.pk %}" class="btn btn-primary">
+                                Переглянути результати
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if user.is_moderator %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Управління варіантами</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'votes:option_add' vote.pk %}" class="btn btn-success">
+                            <i class="bi bi-plus"></i> Додати варіант відповіді
+                        </a>
+                    </div>
+                    
+                    {% if vote.options.all %}
+                    <hr>
+                    <h6>Існуючі варіанти:</h6>
+                    <ul class="list-group">
+                        {% for option in vote.options.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                {% if option.image %}
+                                <img src="{{ option.image.url }}" alt="" style="width: 30px; height: 30px; object-fit: cover;" class="me-2">
+                                {% endif %}
+                                {{ option.text }} ({{ option.votes }} голосів)
+                            </div>
+                            <div>
+                                <a href="{% url 'votes:option_update' option.pk %}" class="btn btn-sm btn-outline-primary">
+                                    Редагувати
+                                </a>
+                                <a href="{% url 'votes:option_delete' option.pk %}" class="btn btn-sm btn-outline-danger">
+                                    Видалити
+                                </a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Тип:</span>
+                            <span>{{ vote.get_vote_type_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Статус:</span>
+                            <span>
+                                {% if is_active %}
+                                <span class="text-success">Активне</span>
+                                {% else %}
+                                <span class="text-secondary">Неактивне</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Створено:</span>
+                            <span>{{ vote.created_at|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% if vote.end_date %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Закінчується:</span>
+                            <span>{{ vote.end_date|date:"d.m.Y H:i" }}</span>
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Варіантів:</span>
+                            <span>{{ vote.options.count }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Навігація</h5>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'votes:vote_list' %}" class="list-group-item list-group-item-action">
+                            ← Всі голосування
+                        </a>
+                        <a href="{% url 'votes:vote_results' vote.pk %}" class="list-group-item list-group-item-action">
+                            Результати голосування
+                        </a>
+                        <a href="{% url 'votes:vote_by_type' vote.vote_type %}" class="list-group-item list-group-item-action">
+                            Подібні голосування
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

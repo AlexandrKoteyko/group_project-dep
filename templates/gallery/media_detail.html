@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ media_item.title|default:"Медіа" }} | Галерея | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h1 class="h3 mb-0">{{ media_item.title|default:"Без назви" }}</h1>
+                        </div>
+                        <div>
+                            {% if can_edit %}
+                            <a href="{% url 'gallery:media_update' media_item.pk %}" class="btn btn-sm btn-outline-primary">
+                                Редагувати
+                            </a>
+                            <a href="{% url 'gallery:media_delete' media_item.pk %}" class="btn btn-sm btn-outline-danger">
+                                Видалити
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-info">{{ media_item.get_media_type_display }}</span>
+                        {% if not media_item.is_approved %}
+                        <span class="badge bg-warning">На перевірці</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Media Display -->
+                    <div class="text-center mb-4">
+                        {% if media_item.file.url|lower|slice:'-4:' == '.jpg' or media_item.file.url|lower|slice:'-5:' == '.jpeg' or media_item.file.url|lower|slice:'-4:' == '.png' or media_item.file.url|lower|slice:'-4:' == '.gif' %}
+                        <img src="{{ media_item.file.url }}" class="img-fluid rounded" alt="{{ media_item.title }}">
+                        {% elif media_item.file.url|lower|slice:'-4:' == '.mp4' or media_item.file.url|lower|slice:'-4:' == '.webm' %}
+                        <video controls class="w-100 rounded">
+                            <source src="{{ media_item.file.url }}" type="video/mp4">
+                        </video>
+                        {% else %}
+                        <div class="bg-secondary text-white p-5 rounded">
+                            <i class="bi bi-file-earmark" style="font-size: 4rem;"></i>
+                            <p>Файл: {{ media_item.file.name }}</p>
+                            <a href="{{ media_item.file.url }}" class="btn btn-light" download>Завантажити</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Description -->
+                    {% if media_item.description %}
+                    <div class="mb-4">
+                        <h5>Опис</h5>
+                        <p>{{ media_item.description|linebreaks }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Meta Info -->
+                    <div class="border-top pt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">
+                                    Завантажено: 
+                                    <a href="{% url 'accounts:profile' media_item.user.pk %}">
+                                        {{ media_item.user.username }}
+                                    </a>
+                                    | {{ media_item.created_at|date:"d.m.Y H:i" }}
+                                </small>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <form method="post" action="{% url 'gallery:like_media' media_item.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger me-2">
+                                        <i class="bi bi-heart"></i> {{ media_item.likes }}
+                                    </button>
+                                </form>
+                                <a href="{% url 'gallery:gallery_list' %}" class="btn btn-sm btn-outline-secondary">
+                                    Назад
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Автор:</span>
+                            <a href="{% url 'accounts:profile' media_item.user.pk %}">
+                                {{ media_item.user.username }}
+                            </a>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Тип:</span>
+                            <span>{{ media_item.get_media_type_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Статус:</span>
+                            <span>
+                                {% if media_item.is_approved %}
+                                <span class="text-success">Схвалено</span>
+                                {% else %}
+                                <span class="text-warning">На перевірці</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Лайки:</span>
+                            <span>{{ media_item.likes }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Завантажено:</span>
+                            <span>{{ media_item.created_at|date:"d.m.Y" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            {% if similar_media %}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Схожі медіа</h5>
+                    <div class="row g-2">
+                        {% for item in similar_media %}
+                        <div class="col-6">
+                            <a href="{% url 'gallery:media_detail' item.pk %}" class="text-decoration-none">
+                                <div class="card">
+                                    <div class="position-relative" style="padding-top: 100%;">
+                                        {% if item.file.url|lower|slice:'-4:' == '.jpg' or item.file.url|lower|slice:'-5:' == '.jpeg' or item.file.url|lower|slice:'-4:' == '.png' %}
+                                        <img src="{{ item.file.url }}" class="position-absolute top-0 start-0 w-100 h-100" 
+                                             style="object-fit: cover;" alt="{{ item.title }}">
+                                        {% else %}
+                                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-secondary d-flex align-items-center justify-content-center">
+                                            <small class="text-white">{{ item.get_media_type_display }}</small>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-body p-1">
+                                        <small class="text-truncate d-block">{{ item.title|default:"Без назви"|truncatechars:15 }}</small>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

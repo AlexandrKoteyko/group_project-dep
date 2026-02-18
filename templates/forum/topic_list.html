@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if category %}{{ category.get_name_display }} | {% endif %}Форум | CS2 MicroTwitter
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            {% if category %}
+                {{ category.get_name_display }}
+            {% else %}
+                Всі теми
+            {% endif %}
+        </h1>
+        <a href="{% url 'forum:topic_create' %}" class="btn btn-success">Створити тему</a>
+    </div>
+    
+    {% if category and category.description %}
+    <div class="alert alert-info">
+        {{ category.description }}
+    </div>
+    {% endif %}
+    
+    <div class="list-group">
+        {% for topic in topics %}
+        <div class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <div>
+                    {% if topic.is_pinned %}
+                    <span class="badge bg-warning me-2">Закріплено</span>
+                    {% endif %}
+                    {% if topic.is_closed %}
+                    <span class="badge bg-danger me-2">Закрито</span>
+                    {% endif %}
+                    <h5 class="mb-1">
+                        <a href="{% url 'forum:topic_detail' topic.pk %}" class="text-decoration-none">
+                            {{ topic.title }}
+                        </a>
+                    </h5>
+                    <small class="text-muted">
+                        Автор: <a href="{% url 'accounts:profile' topic.created_by.pk %}">{{ topic.created_by.username }}</a>
+                        | {{ topic.created_at|date:"d.m.Y H:i" }}
+                        | Повідомлень: {{ topic.messages.count }}
+                    </small>
+                </div>
+                <small class="text-muted">
+                    {% if topic.updated_at %}
+                    Оновлено: {{ topic.updated_at|date:"d.m.Y H:i" }}
+                    {% endif %}
+                </small>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            {% if category %}
+                Поки що немає тем у цій категорії.
+            {% else %}
+                Поки що немає тем на форумі.
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="Навігація по сторінках" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    <div class="mt-3">
+        <a href="{% url 'forum:category_list' %}" class="btn btn-outline-secondary">Назад до категорій</a>
+        {% if category %}
+        <a href="{% url 'forum:topic_create' %}?category={{ category.id }}" class="btn btn-success ms-2">Створити тему в цій категорії</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

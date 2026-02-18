@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Головна | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            {% if user.is_authenticated %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-start">
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" class="rounded-circle me-3" width="50" height="50" style="object-fit: cover;">
+                        {% else %}
+                        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                             style="width: 50px; height: 50px;">
+                            <span class="text-white">{{ user.username|first|upper }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="flex-grow-1">
+                            <a href="{% url 'posts:post_create' %}" class="btn btn-outline-primary w-100 text-start">
+                                Що нового у CS2?
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if pinned_posts %}
+            <div class="mb-4">
+                <h5 class="mb-3">📌 Закріплені пости</h5>
+                {% for post in pinned_posts %}
+                <div class="card mb-3 border-warning">
+                    <div class="card-body">
+                        {% include 'posts/includes/post_card.html' with post=post %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <h5 class="mb-3">Останні пости</h5>
+            {% for post in posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    {% include 'posts/includes/post_card.html' with post=post %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">
+                Поки що немає постів. Будьте першим, хто напише про CS2!
+            </div>
+            {% endfor %}
+            
+            {% if is_paginated %}
+            <nav aria-label="Навігація по сторінках" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Трендові хештеги</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for hashtag in trending_hashtags %}
+                        <a href="{% url 'posts:hashtag_posts' hashtag.name %}" class="text-decoration-none">
+                            <span class="badge bg-secondary">#{{ hashtag.name }}</span>
+                        </a>
+                        {% empty %}
+                        <p class="text-muted">Поки що немає хештегів</p>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'posts:hashtag_list' %}" class="btn btn-sm btn-outline-secondary w-100">
+                            Всі хештеги
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Про CS2 MicroTwitter</h5>
+                    <p class="small">Соціальна мережа для фанатів Counter-Strike 2. 
+                       Діліться хайлайтами, обговорюйте матчі та патчі, голосуйте за найкращі моменти!</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'posts:post_create' %}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Написати пост
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

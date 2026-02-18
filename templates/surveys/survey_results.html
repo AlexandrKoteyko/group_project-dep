@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Результати: {{ survey.title }} | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Результати опитування: {{ survey.title }}</h1>
+        <div>
+            <a href="{% url 'surveys:survey_detail' survey.pk %}" class="btn btn-outline-secondary">
+                До опитування
+            </a>
+            {% if survey.is_active %}
+            <a href="{% url 'surveys:survey_take' survey.pk %}" class="btn btn-success">
+                Пройти опитування
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <p class="text-muted mb-4">{{ survey.description }}</p>
+            
+            {% for result in results %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Питання {{ forloop.counter }}: {{ result.question.text }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Всього голосів: {{ result.total_votes }}</p>
+                    
+                    {% for choice in result.choices %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ choice.text }}</span>
+                            <span>{{ choice.votes }} голосів ({{ choice.percentage|floatformat:1 }}%)</span>
+                        </div>
+                        <!--сделать статус бар-->
+                        
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="alert alert-info">
+                Ще немає результатів для цього опитування.
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Інформація</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Статус:</span>
+                            <span>
+                                {% if survey.is_active %}
+                                <span class="text-success">Активне</span>
+                                {% else %}
+                                <span class="text-secondary">Неактивне</span>
+                                {% endif %}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Кількість питань:</span>
+                            <span>{{ survey.questions.count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Загальна кількість голосів:</span>
+                            <span>
+                                {% with total=0 %}
+                                    {% for result in results %}
+                                        {% with total=total|add:result.total_votes %}
+                                        {% endwith %}
+                                    {% endfor %}
+                                    {{ results|length }}
+                                {% endwith %}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Підтримка | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Підтримка проекту</h1>
+    
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card mb-4 text-center">
+                <div class="card-body">
+                    <i class="bi bi-heart-fill text-danger" style="font-size: 4rem;"></i>
+                    <h3 class="mt-3">Підтримайте CS2 MicroTwitter</h3>
+                    <p class="lead">Допоможіть нам розвивати спільноту фанатів CS2</p>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-paypal text-primary" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">PayPal</h5>
+                            <p class="card-text">Підтримайте проект через PayPal</p>
+                            <button class="btn btn-primary" onclick="alert('PayPal: cs2microtwitter@support.com')">
+                                Деталі
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-patreon text-danger" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Patreon</h5>
+                            <p class="card-text">Станьте патроном та отримуйте бонуси</p>
+                            <button class="btn btn-danger" onclick="alert('Скоро буде доступно!')">
+                                Скоро
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-cup-hot-fill text-warning" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">Buy Me a Coffee</h5>
+                            <p class="card-text">Пригостіть розробників кавою</p>
+                            <button class="btn btn-warning" onclick="alert('buycoffee.to/cs2microtwitter')">
+                                Деталі
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-github text-dark" style="font-size: 3rem;"></i>
+                            <h5 class="card-title mt-3">GitHub</h5>
+                            <p class="card-text">Зробіть внесок в розвиток проекту</p>
+                            <a href="#" class="btn btn-dark">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Чому важлива підтримка?</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="bi bi-server text-primary me-2"></i>
+                            Оплата серверів та хостингу
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-code-slash text-primary me-2"></i>
+                            Розвиток нових функцій
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-shield-check text-primary me-2"></i>
+                            Покращення безпеки та модерації
+                        </li>
+                        <li class="list-group-item">
+                            <i class="bi bi-trophy text-primary me-2"></i>
+                            Організація конкурсів та івентів
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Бонуси для патронів</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="border rounded p-3">
+                                <i class="bi bi-star-fill text-warning" style="font-size: 2rem;"></i>
+                                <h6>Спеціальний статус</h6>
+                                <small class="text-muted">Відзначка в профілі</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="border rounded p-3">
+                                <i class="bi bi-emoji-heart-eyes text-danger" style="font-size: 2rem;"></i>
+                                <h6>Ексклюзивні емодзі</h6>
+                                <small class="text-muted">Доступ до особливих емодзі</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <div class="border rounded p-3">
+                                <i class="bi bi-megaphone text-primary" style="font-size: 2rem;"></i>
+                                <h6>Ранній доступ</h6>
+                                <small class="text-muted">До нових функцій</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Наші контакти для підтримки</h5>
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <i class="bi bi-envelope fs-1"></i>
+                            <p>support@cs2microtwitter.com</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="bi bi-telegram fs-1"></i>
+                            <p>@cs2microtwitter_support</p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="bi bi-discord fs-1"></i>
+                            <p>discord.gg/cs2microtwitter</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i>
+                Дякуємо, що ви з нами! Кожна підтримка допомагає робити спільноту кращою.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

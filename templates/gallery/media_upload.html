@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if object %}Редагувати медіа{% else %}Завантажити медіа{% endif %} | CS2 MicroTwitter
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        {% if object %}
+                        Редагувати медіа
+                        {% else %}
+                        Завантажити медіа до галереї
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            {{ form.title.label_tag }}
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Назва медіа (необов'язково)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.media_type.label_tag }}
+                            {{ form.media_type }}
+                            {% if form.media_type.errors %}
+                            <div class="text-danger">{{ form.media_type.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.file.label_tag }}
+                            {{ form.file }}
+                            {% if form.file.errors %}
+                            <div class="text-danger">{{ form.file.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">
+                                Підтримувані формати: зображення (JPG, PNG, GIF), відео (MP4, WebM), та інші файли
+                            </div>
+                            
+                            {% if object and object.file %}
+                            <div class="mt-2">
+                                <p>Поточний файл: {{ object.file.name }}</p>
+                                {% if object.file.url|lower|slice:'-4:' == '.jpg' or object.file.url|lower|slice:'-5:' == '.jpeg' or object.file.url|lower|slice:'-4:' == '.png' %}
+                                <img src="{{ object.file.url }}" alt="" style="max-width: 200px;" class="img-thumbnail">
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.description.label_tag }}
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Опис медіа (необов'язково)</div>
+                        </div>
+                        
+                        {% if not user.is_moderator and object %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Після редагування медіа знову потрапить на перевірку модератору.
+                        </div>
+                        {% endif %}
+                        
+                        <div class="d-flex justify-content-between">
+                            {% if object %}
+                            <a href="{% url 'gallery:media_detail' object.pk %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% else %}
+                            <a href="{% url 'gallery:gallery_list' %}" class="btn btn-secondary">
+                                Скасувати
+                            </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-primary">
+                                {% if object %}Зберегти зміни{% else %}Завантажити{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

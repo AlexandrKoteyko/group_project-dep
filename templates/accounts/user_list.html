@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Користувачі | CS2 MicroTwitter{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Список користувачів</h1>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-6 mb-2">
+                    <input type="text" name="search" class="form-control" 
+                           placeholder="Пошук за іменем..." value="{{ search_query }}">
+                </div>
+                <div class="col-md-4 mb-2">
+                    <select name="role" class="form-control">
+                        <option value="">Всі ролі</option>
+                        <option value="user" {% if role_filter == 'user' %}selected{% endif %}>Користувач</option>
+                        <option value="moderator" {% if role_filter == 'moderator' %}selected{% endif %}>Модератор</option>
+                        <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Адміністратор</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <button type="submit" class="btn btn-primary w-100">Фільтрувати</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if users %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Користувач</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                    <th>Дата реєстрації</th>
+                    <th>Дії</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_obj in users %}
+                <tr>
+                    <td>{{ user_obj.id }}</td>
+                    <td>
+                        <a href="{% url 'accounts:profile' user_obj.pk %}">
+                            {{ user_obj.username }}
+                        </a>
+                    </td>
+                    <td>{{ user_obj.email|default:"-" }}</td>
+                    <td>
+                        <span class="badge bg-{% if user_obj.role == 'admin' %}danger{% elif user_obj.role == 'moderator' %}warning{% else %}info{% endif %}">
+                            {{ user_obj.get_role_display }}
+                        </span>
+                    </td>
+                    <td>{{ user_obj.date_joined|date:"d.m.Y" }}</td>
+                    <td>
+                        <a href="{% url 'accounts:profile' user_obj.pk %}" class="btn btn-sm btn-outline-primary">
+                            Переглянути
+                        </a>
+                        {% if request.user.is_admin %}
+                        <a href="{% url 'accounts:user_role_update' user_obj.pk %}" class="btn btn-sm btn-warning">
+                            Роль
+                        </a>
+                        {% if user_obj != request.user %}
+                        <a href="{% url 'accounts:user_delete' user_obj.pk %}" class="btn btn-sm btn-danger">
+                            Видалити
+                        </a>
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="Навігація по сторінках" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if role_filter %}&role={{ role_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                    Попередня
+                </a>
+            </li>
+            {% endif %}
+            
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}{% if role_filter %}&role={{ role_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                    {{ num }}
+                </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+            
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if role_filter %}&role={{ role_filter }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                    Наступна
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+    {% else %}
+    <div class="alert alert-info">
+        Користувачів не знайдено.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
