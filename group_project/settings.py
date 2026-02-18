@@ -11,6 +11,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-your-dev-key-here')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+if os.environ.get('RENDER'):
+    ALLOWED_HOSTS.append('.onrender.com')
+    # Також додайте точну назву вашого сервісу
+    ALLOWED_HOSTS.append('group-project-dep.onrender.com')
 
 # Application definition
 INSTALLED_APPS = [
