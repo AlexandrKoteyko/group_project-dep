@@ -37,7 +37,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Додаємо WhiteNoise для статичних файлів
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise для статичних файлів
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -66,13 +66,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'group_project.wsgi.application'
 
-# Database - використовуємо PostgreSQL на Render.com
-DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-        conn_max_age=600
-    )
-}
+# Database - використовуємо PostgreSQL на Render.com, SQLite для локальної розробки
+if os.environ.get('DATABASE_URL'):
+    # На Render.com
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ['DATABASE_URL'],
+            conn_max_age=600
+        )
+    }
+else:
+    # Локальна розробка
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

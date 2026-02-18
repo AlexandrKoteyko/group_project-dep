@@ -6,13 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    # Перевіряємо, чи ми на Render.com
-    if os.environ.get('RENDER'):
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'group_project.settings')
-    else:
-        # Локальна розробка
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'group_project.settings')
-    
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'group_project.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
