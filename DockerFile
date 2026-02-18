@@ -1,14 +1,30 @@
-FROM python:3.12-slim 
+FROM python:3.12-slim
+
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
+
 WORKDIR /app
+
+# Встановлюємо системні залежності для psycopg2
 RUN apt-get update && apt-get install -y \
-gcc \
-&& rm -rf /var/lib/apt/lists/*
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Копіюємо вимоги та встановлюємо Python залежності
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Копіюємо весь проект
 COPY . /app/
+
+# Робимо скрипт entrypoint виконуваним
+RUN chmod +x entrypoint.sh
+
+# Збираємо статичні файли
 RUN python manage.py collectstatic --noinput
+
 EXPOSE 8000
 
-ENTRYPOINT [ "gunicorn", "--bind", "0.0.0.0:8000", "group_project.wsgi:application" ]
+# Використовуємо entrypoint скрипт
+ENTRYPOINT ["./entrypoint.sh"]
