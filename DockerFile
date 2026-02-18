@@ -1,11 +1,13 @@
-FROM python:3.12-slim
+﻿FROM python:3.12-slim
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PORT=8000
+ENV DJANGO_SETTINGS_MODULE=group_project.settings
 
 WORKDIR /app
 
-# Встановлюємо системні залежності для psycopg2
+# Встановлюємо системні залежності
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
@@ -18,13 +20,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копіюємо весь проект
 COPY . /app/
 
-# Робимо скрипт entrypoint виконуваним
-RUN chmod +x entrypoint.sh
-
 # Збираємо статичні файли
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-# Використовуємо entrypoint скрипт
-ENTRYPOINT ["./entrypoint.sh"]
+# Використовуємо JSON формат для CMD
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn group_project.wsgi:application --bind 0.0.0.0:$PORT"]
